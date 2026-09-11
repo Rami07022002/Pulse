@@ -59,20 +59,33 @@ export interface TimelineEvent {
 export interface AppState {
   hydrated: boolean;
   error: string | null;
-  completeHydration: () => void;
   user: UserProfile;
   status: StatusState;
   streak: StreakState;
   events: TimelineEvent[];
-  completeAuth: (phoneNumber: string, displayName: string) => void;
-  resetAuth: () => void;
-  pairWithPartner: (code: string) => boolean;
+
+  // Initialization (loads profile from Supabase)
+  initialize: (userId: string, email?: string) => Promise<void>;
+  // Pairing
+  pairWithPartner: (code: string) => Promise<boolean>;
+  // Core actions
   setMyStatus: (icon: string, label: string) => void;
   sendPulse: () => void;
+  // Profile updates
   updateDisplayName: (displayName: string) => void;
   updateAvatarColor: (avatarColor: string) => void;
   updateHapticIntensity: (hapticIntensity: HapticIntensity) => void;
+  // Pairing management
   unpair: () => void;
+  // Data fetching
+  fetchPartnerData: () => Promise<void>;
+  fetchEvents: () => Promise<void>;
+  fetchStreak: () => Promise<void>;
+  // Realtime event handlers
+  handlePartnerStatusUpdate: (icon: string, label: string, setAt: number) => void;
+  handlePartnerPulse: (timestamp: number) => void;
+  handleNewEvent: (event: TimelineEvent) => void;
+  // Utility
   clearError: () => void;
-  pruneTimeline: () => void;
+  reset: () => void;
 }

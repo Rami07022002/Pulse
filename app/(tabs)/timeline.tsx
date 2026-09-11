@@ -1,17 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack } from "expo-router";
-import { useCallback, useMemo } from "react";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { useCallback, useEffect, useMemo } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors, radii, shadows } from "@/constants/theme";
+import { colors, shadows } from "@/constants/theme";
 import { Fonts } from "@/constants/Typography";
 import { clockTime, hourLabel } from "@/lib/time";
-import { ErrorState, LoadingState, SectionLabel, type IconName } from "@/components/pulse-ui";
+import {
+  ErrorState,
+  LoadingState,
+  SectionLabel,
+  type IconName,
+} from "@/components/pulse-ui";
 import { useAppStore } from "@/store/useAppStore";
 import type { TimelineEvent } from "@/store/types";
 
@@ -28,27 +28,56 @@ function eventIcon(event: TimelineEvent): IconName {
   return event.type === "pulse_received" ? "heart" : "pulse-outline";
 }
 
-function TimelineEventRow({ event, isLast }: { event: TimelineEvent; isLast: boolean }) {
+function TimelineEventRow({
+  event,
+  isLast,
+  partnerName,
+}: {
+  event: TimelineEvent;
+  isLast: boolean;
+  partnerName: string;
+}) {
   const isMine = event.actor === "me";
   const accent = isMine ? colors.violetBright : colors.pink;
   return (
     <View style={styles.eventRow}>
       <View style={styles.eventTime}>
-        <Text style={styles.eventTimeText}>{clockTime(event.timestamp)}</Text>
+        <Text style={styles.eventTimeText}>
+          {clockTime(event.timestamp)}
+        </Text>
       </View>
       <View style={styles.eventRail}>
-        <View style={[styles.eventDot, { backgroundColor: accent, shadowColor: accent }]}>
+        <View
+          style={[
+            styles.eventDot,
+            { backgroundColor: accent, shadowColor: accent },
+          ]}
+        >
           <View style={styles.eventDotCenter} />
         </View>
         {!isLast ? <View style={styles.eventLine} /> : null}
       </View>
-      <View style={[styles.eventCard, { borderColor: isMine ? "#3A3159" : "#4A2D42" }]}>
-        <View style={[styles.eventIcon, { backgroundColor: isMine ? "#251E3D" : "#35202D" }]}>
+      <View
+        style={[
+          styles.eventCard,
+          { borderColor: isMine ? "#3A3159" : "#4A2D42" },
+        ]}
+      >
+        <View
+          style={[
+            styles.eventIcon,
+            { backgroundColor: isMine ? "#251E3D" : "#35202D" },
+          ]}
+        >
           <Ionicons name={eventIcon(event)} size={16} color={accent} />
         </View>
         <View style={styles.eventCopy}>
-          <Text style={styles.eventActor}>{isMine ? "You" : "Alex"}</Text>
-          <Text style={styles.eventContent}>{event.content.replace(/^(You|Alex) /, "")}</Text>
+          <Text style={styles.eventActor}>
+            {isMine ? "You" : partnerName}
+          </Text>
+          <Text style={styles.eventContent}>
+            {event.content.replace(/^(You|[A-Za-z]+) /, "")}
+          </Text>
         </View>
       </View>
     </View>
@@ -57,21 +86,28 @@ function TimelineEventRow({ event, isLast }: { event: TimelineEvent; isLast: boo
 
 export default function TimelineScreen() {
   const insets = useSafeAreaInsets();
-  const hydrated = useAppStore((state) => state.hydrated);
-  const error = useAppStore((state) => state.error);
-  const events = useAppStore((state) => state.events);
-  const clearError = useAppStore((state) => state.clearError);
-  const pruneTimeline = useAppStore((state) => state.pruneTimeline);
+  const hydrated = useAppStore((s) => s.hydrated);
+  const error = useAppStore((s) => s.error);
+  const events = useAppStore((s) => s.events);
+  const partnerName = useAppStore((s) => s.user.partnerName);
+  const clearError = useAppStore((s) => s.clearError);
+  const fetchEvents = useAppStore((s) => s.fetchEvents);
+
+  // Fetch events from Supabase on mount
+  useEffect(() => {
+    void fetchEvents();
+  }, [fetchEvents]);
 
   const groups = useMemo<TimelineGroup[]>(() => {
     const sorted = [...events].sort((a, b) => b.timestamp - a.timestamp);
     const grouped = new Map<string, TimelineEvent[]>();
-    sorted.forEach((event) => {
-      const key = `${new Date(event.timestamp).getFullYear()}-${new Date(event.timestamp).getMonth()}-${new Date(event.timestamp).getDate()}-${new Date(event.timestamp).getHours()}`;
+    for (const event of sorted) {
+      const d = new Date(event.timestamp);
+      const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}`;
       const existing = grouped.get(key) ?? [];
       existing.push(event);
       grouped.set(key, existing);
-    });
+    }
     return Array.from(grouped.entries()).map(([id, groupEvents]) => ({
       id,
       label: hourLabel(groupEvents[0]?.timestamp ?? Date.now()),
@@ -81,8 +117,8 @@ export default function TimelineScreen() {
 
   const handleRetry = useCallback(() => {
     clearError();
-    pruneTimeline();
-  }, [clearError, pruneTimeline]);
+    void fetchEvents();
+  }, [clearError, fetchEvents]);
 
   if (!hydrated) {
     return <LoadingState />;
@@ -97,23 +133,37 @@ export default function TimelineScreen() {
       <Stack.Screen options={{ title: "Timeline", headerShown: false }} />
       <FlatList
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={[styles.content, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 88 }]}
+        contentContainerStyle={[
+          styles.content,
+          {
+            paddingTop: insets.top + 20,
+            paddingBottom: insets.bottom + 88,
+          },
+        ]}
         data={groups}
         keyExtractor={(group) => group.id}
         ListEmptyComponent={
           <View style={styles.emptyState}>
             <View style={styles.emptyIcon}>
-              <Ionicons name="sparkles-outline" size={24} color={colors.violetBright} />
+              <Ionicons
+                name="sparkles-outline"
+                size={24}
+                color={colors.violetBright}
+              />
             </View>
             <Text style={styles.emptyTitle}>Your story starts today</Text>
-            <Text style={styles.emptyMessage}>Send a pulse or set a status to leave the first little mark.</Text>
+            <Text style={styles.emptyMessage}>
+              Send a pulse or set a status to leave the first little mark.
+            </Text>
           </View>
         }
         ListHeaderComponent={
           <View style={styles.header}>
             <View>
               <Text style={styles.title}>Today</Text>
-              <Text style={styles.subtitle}>The small moments that keep you close.</Text>
+              <Text style={styles.subtitle}>
+                The small moments that keep you close.
+              </Text>
             </View>
             <View style={styles.livePill}>
               <View style={styles.liveDot} />
@@ -126,7 +176,12 @@ export default function TimelineScreen() {
             <SectionLabel>{group.label}</SectionLabel>
             <View style={styles.groupEvents}>
               {group.events.map((event, index) => (
-                <TimelineEventRow key={event.id} event={event} isLast={index === group.events.length - 1} />
+                <TimelineEventRow
+                  key={event.id}
+                  event={event}
+                  isLast={index === group.events.length - 1}
+                  partnerName={partnerName}
+                />
               ))}
             </View>
           </View>
@@ -171,7 +226,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
-    borderRadius: radii.pill,
+    borderRadius: 999,
     backgroundColor: "#14281F",
     borderWidth: 1,
     borderColor: "#27513D",
@@ -188,33 +243,21 @@ const styles = StyleSheet.create({
     fontSize: 10,
     letterSpacing: 0.8,
   },
-  group: {
-    gap: 12,
-  },
-  groupEvents: {
-    gap: 10,
-  },
+  group: { gap: 12 },
+  groupEvents: { gap: 10 },
   eventRow: {
     minHeight: 76,
     flexDirection: "row",
     alignItems: "stretch",
   },
-  eventTime: {
-    width: 58,
-    paddingTop: 15,
-    paddingRight: 8,
-    alignItems: "flex-end",
-  },
+  eventTime: { width: 58, paddingTop: 15, paddingRight: 8, alignItems: "flex-end" },
   eventTimeText: {
     color: colors.textSecondary,
     fontFamily: Fonts.medium,
     fontSize: 11,
     textAlign: "right",
   },
-  eventRail: {
-    width: 22,
-    alignItems: "center",
-  },
+  eventRail: { width: 22, alignItems: "center" },
   eventDot: {
     width: 13,
     height: 13,
@@ -246,6 +289,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     borderRadius: 15,
+    borderCurve: "continuous",
     backgroundColor: colors.surface,
     borderWidth: 1,
     ...shadows.card,
@@ -256,11 +300,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 11,
+    borderCurve: "continuous",
   },
-  eventCopy: {
-    flex: 1,
-    gap: 3,
-  },
+  eventCopy: { flex: 1, gap: 3 },
   eventActor: {
     color: colors.textSecondary,
     fontFamily: Fonts.medium,
@@ -286,6 +328,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 22,
+    borderCurve: "continuous",
     backgroundColor: "#201A34",
     borderWidth: 1,
     borderColor: "#493B70",

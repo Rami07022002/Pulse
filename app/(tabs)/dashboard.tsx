@@ -1,20 +1,25 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { statusOptions, type StatusOption } from "@/constants/statuses";
+import {
+  statusOptions,
+  type StatusOption,
+} from "@/constants/statuses";
 import { colors, radii, shadows } from "@/constants/theme";
 import { Fonts } from "@/constants/Typography";
 import { triggerHaptic } from "@/lib/haptics";
 import { relativeTime } from "@/lib/time";
-import { Avatar, ErrorState, IconButton, LoadingState, PulseButton, SectionLabel, type IconName } from "@/components/pulse-ui";
+import {
+  Avatar,
+  ErrorState,
+  IconButton,
+  LoadingState,
+  PulseButton,
+  SectionLabel,
+  type IconName,
+} from "@/components/pulse-ui";
 import { useAppStore } from "@/store/useAppStore";
 
 interface StatusChipProps {
@@ -30,26 +35,51 @@ function StatusChip({ option, active, onPress }: StatusChipProps) {
       accessibilityRole="button"
       accessibilityLabel={`Set status to ${option.label}`}
       onPress={handlePress}
-      style={({ pressed }) => [styles.statusChip, active && styles.statusChipActive, pressed && styles.chipPressed]}
+      style={({ pressed }) => [
+        styles.statusChip,
+        active && styles.statusChipActive,
+        pressed && styles.chipPressed,
+      ]}
     >
-      <Ionicons name={option.icon} size={18} color={active ? colors.violetBright : colors.textSecondary} />
-      <Text style={[styles.statusChipText, active && styles.statusChipTextActive]}>{option.label}</Text>
+      <Ionicons
+        name={option.icon}
+        size={18}
+        color={active ? colors.violetBright : colors.textSecondary}
+      />
+      <Text
+        style={[
+          styles.statusChipText,
+          active && styles.statusChipTextActive,
+        ]}
+      >
+        {option.label}
+      </Text>
     </Pressable>
   );
 }
 
 export default function DashboardScreen() {
   const insets = useSafeAreaInsets();
-  const hydrated = useAppStore((state) => state.hydrated);
-  const error = useAppStore((state) => state.error);
-  const user = useAppStore((state) => state.user);
-  const status = useAppStore((state) => state.status);
-  const streak = useAppStore((state) => state.streak);
-  const sendPulse = useAppStore((state) => state.sendPulse);
-  const setMyStatus = useAppStore((state) => state.setMyStatus);
-  const clearError = useAppStore((state) => state.clearError);
+  const hydrated = useAppStore((s) => s.hydrated);
+  const error = useAppStore((s) => s.error);
+  const user = useAppStore((s) => s.user);
+  const status = useAppStore((s) => s.status);
+  const streak = useAppStore((s) => s.streak);
+  const sendPulse = useAppStore((s) => s.sendPulse);
+  const setMyStatus = useAppStore((s) => s.setMyStatus);
+  const clearError = useAppStore((s) => s.clearError);
+  const fetchPartnerData = useAppStore((s) => s.fetchPartnerData);
+  const fetchStreak = useAppStore((s) => s.fetchStreak);
   const [notice, setNotice] = useState<string | null>(null);
   const [now, setNow] = useState(Date.now());
+
+  // Refresh partner data on mount
+  useEffect(() => {
+    if (user.isPaired) {
+      void fetchPartnerData();
+      void fetchStreak();
+    }
+  }, [user.isPaired, fetchPartnerData, fetchStreak]);
 
   useEffect(() => {
     const interval = setInterval(() => setNow(Date.now()), 30_000);
@@ -57,9 +87,7 @@ export default function DashboardScreen() {
   }, []);
 
   useEffect(() => {
-    if (!notice) {
-      return;
-    }
+    if (!notice) return;
     const timeout = setTimeout(() => setNotice(null), 2800);
     return () => clearTimeout(timeout);
   }, [notice]);
@@ -116,20 +144,39 @@ export default function DashboardScreen() {
       <ScrollView
         testID="home-screen-content"
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={[styles.content, { paddingTop: insets.top + 18, paddingBottom: insets.bottom + 88 }]}
+        contentContainerStyle={[
+          styles.content,
+          {
+            paddingTop: insets.top + 18,
+            paddingBottom: insets.bottom + 88,
+          },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.topBar}>
           <View>
-            <Text style={styles.greeting}>Good evening, {user.displayName}</Text>
+            <Text style={styles.greeting}>
+              Good evening, {user.displayName}
+            </Text>
             <Text style={styles.topHint}>Your little corner of calm.</Text>
           </View>
-          <IconButton icon="notifications-outline" accessibilityLabel="View notifications" onPress={handleBell} color={colors.violetBright} />
+          <IconButton
+            icon="notifications-outline"
+            accessibilityLabel="View notifications"
+            onPress={handleBell}
+            color={colors.violetBright}
+          />
         </View>
 
+        {/* Partner Header Card */}
         <View style={styles.partnerCard}>
           <View style={styles.partnerIdentity}>
-            <Avatar color={user.partnerAvatarColor} name={user.partnerName} size={52} online />
+            <Avatar
+              color={user.partnerAvatarColor}
+              name={user.partnerName}
+              size={52}
+              online
+            />
             <View style={styles.partnerCopy}>
               <View style={styles.partnerNameRow}>
                 <Text style={styles.partnerName}>{user.partnerName}</Text>
@@ -139,35 +186,62 @@ export default function DashboardScreen() {
                 </View>
               </View>
               <View style={styles.statusLine}>
-                <Ionicons name={(status.partnerStatus?.icon as IconName | undefined) ?? "sparkles-outline"} size={15} color={colors.orange} />
+                <Ionicons
+                  name={
+                    (status.partnerStatus?.icon as IconName | undefined) ??
+                    "sparkles-outline"
+                  }
+                  size={15}
+                  color={colors.orange}
+                />
                 <Text style={styles.partnerStatus}>{partnerStatusText}</Text>
               </View>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={17} color={colors.textTertiary} />
+          <Ionicons
+            name="chevron-forward"
+            size={17}
+            color={colors.textTertiary}
+          />
         </View>
 
+        {/* Center Pulse Button */}
         <View style={styles.pulseSection}>
           <PulseButton onPress={handlePulse} />
-          <Text style={styles.pulseCaption}>A tiny signal goes a long way.</Text>
+          <Text style={styles.pulseCaption}>
+            A tiny signal goes a long way.
+          </Text>
         </View>
 
+        {/* Quick-Status Grid */}
         <View style={styles.sectionBlock}>
           <SectionLabel>Quick status</SectionLabel>
           {activeStatus ? (
             <View style={styles.activeStatusBanner}>
-              <Ionicons name={activeStatus.icon as IconName} size={16} color={colors.violetBright} />
-              <Text style={styles.activeStatusText}>You are in {activeStatus.label.toLowerCase()}</Text>
+              <Ionicons
+                name={activeStatus.icon as IconName}
+                size={16}
+                color={colors.violetBright}
+              />
+              <Text style={styles.activeStatusText}>
+                You are in {activeStatus.label.toLowerCase()}
+              </Text>
               <Text style={styles.activeStatusTime}>2h window</Text>
             </View>
           ) : null}
           <View style={styles.statusGrid}>
             {statusOptions.map((option) => (
-              <StatusChip key={option.id} active={activeStatus?.label === option.label} onPress={handleStatus} option={option} />
+              <StatusChip
+                key={option.id}
+                active={activeStatus?.label === option.label}
+                onPress={handleStatus}
+                option={option}
+              />
             ))}
           </View>
         </View>
 
+        {/* Mind Meld Streak Widget */}
         <View style={styles.streakCard}>
           <View style={styles.streakIcon}>
             <Ionicons name="flame" size={25} color={colors.mint} />
@@ -181,9 +255,15 @@ export default function DashboardScreen() {
             <Text style={styles.metricValue}>{streak.momentCount}</Text>
             <Text style={styles.metricLabel}>moments this week</Text>
           </View>
-          <Ionicons name="trending-up" size={18} color={colors.mint} style={styles.streakArrow} />
+          <Ionicons
+            name="trending-up"
+            size={18}
+            color={colors.mint}
+            style={styles.streakArrow}
+          />
         </View>
 
+        {/* Toast / Notice */}
         {notice ? (
           <View style={styles.notice}>
             <Ionicons name="checkmark-circle" size={17} color={colors.mint} />
@@ -196,10 +276,7 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
+  screen: { flex: 1, backgroundColor: colors.background },
   content: {
     flexGrow: 1,
     width: "100%",
@@ -233,6 +310,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderRadius: radii.medium,
+    borderCurve: "continuous",
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
@@ -244,25 +322,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 13,
   },
-  partnerCopy: {
-    flex: 1,
-    gap: 7,
-  },
-  partnerNameRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 9,
-  },
+  partnerCopy: { flex: 1, gap: 7 },
+  partnerNameRow: { flexDirection: "row", alignItems: "center", gap: 9 },
   partnerName: {
     color: colors.white,
     fontFamily: Fonts.semiBold,
     fontSize: 18,
   },
-  onlineLabel: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
+  onlineLabel: { flexDirection: "row", alignItems: "center", gap: 4 },
   onlineLabelDot: {
     width: 6,
     height: 6,
@@ -274,29 +341,19 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.medium,
     fontSize: 10,
   },
-  statusLine: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
+  statusLine: { flexDirection: "row", alignItems: "center", gap: 6 },
   partnerStatus: {
     color: colors.textSecondary,
     fontFamily: Fonts.regular,
     fontSize: 12,
   },
-  pulseSection: {
-    alignItems: "center",
-    gap: 2,
-    paddingTop: 4,
-  },
+  pulseSection: { alignItems: "center", gap: 2, paddingTop: 4 },
   pulseCaption: {
     color: colors.textTertiary,
     fontFamily: Fonts.regular,
     fontSize: 12,
   },
-  sectionBlock: {
-    gap: 12,
-  },
+  sectionBlock: { gap: 12 },
   activeStatusBanner: {
     minHeight: 34,
     paddingHorizontal: 11,
@@ -304,6 +361,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 7,
     borderRadius: 10,
+    borderCurve: "continuous",
     backgroundColor: "#19152A",
     borderWidth: 1,
     borderColor: "#453667",
@@ -319,11 +377,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.regular,
     fontSize: 10,
   },
-  statusGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 9,
-  },
+  statusGrid: { flexDirection: "row", flexWrap: "wrap", gap: 9 },
   statusChip: {
     width: "48.2%",
     minHeight: 49,
@@ -332,6 +386,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     borderRadius: 13,
+    borderCurve: "continuous",
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.borderSoft,
@@ -344,24 +399,21 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 0 },
   },
-  chipPressed: {
-    opacity: 0.7,
-  },
+  chipPressed: { opacity: 0.7 },
   statusChipText: {
     flex: 1,
     color: colors.textSecondary,
     fontFamily: Fonts.medium,
     fontSize: 12,
   },
-  statusChipTextActive: {
-    color: colors.white,
-  },
+  statusChipTextActive: { color: colors.white },
   streakCard: {
     minHeight: 80,
     padding: 13,
     flexDirection: "row",
     alignItems: "center",
     borderRadius: radii.medium,
+    borderCurve: "continuous",
     backgroundColor: "#172723",
     borderWidth: 1,
     borderColor: "#285345",
@@ -373,12 +425,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 15,
+    borderCurve: "continuous",
     backgroundColor: "#1C4538",
   },
-  streakMetric: {
-    paddingHorizontal: 13,
-    gap: 1,
-  },
+  streakMetric: { paddingHorizontal: 13, gap: 1 },
   metricValue: {
     color: colors.white,
     fontFamily: Fonts.bold,
@@ -390,15 +440,8 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.regular,
     fontSize: 10,
   },
-  metricDivider: {
-    width: 1,
-    height: 38,
-    backgroundColor: "#316557",
-  },
-  streakArrow: {
-    marginLeft: "auto",
-    marginRight: 4,
-  },
+  metricDivider: { width: 1, height: 38, backgroundColor: "#316557" },
+  streakArrow: { marginLeft: "auto", marginRight: 4 },
   notice: {
     alignSelf: "center",
     minHeight: 42,
@@ -406,7 +449,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    borderRadius: radii.pill,
+    borderRadius: 999,
     backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
     borderColor: colors.border,

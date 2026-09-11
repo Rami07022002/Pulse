@@ -1,16 +1,38 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Linking, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Linking,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { Stack, router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAuth } from "@fastshot/auth";
 import { colors, radii, shadows } from "@/constants/theme";
 import { Fonts } from "@/constants/Typography";
 import { triggerHaptic } from "@/lib/haptics";
-import { Avatar, ErrorState, LoadingState, SectionLabel } from "@/components/pulse-ui";
+import {
+  Avatar,
+  ErrorState,
+  LoadingState,
+  SectionLabel,
+} from "@/components/pulse-ui";
 import { useAppStore } from "@/store/useAppStore";
 import type { HapticIntensity } from "@/store/types";
 
-const avatarColors = [colors.pink, colors.violet, colors.mint, colors.orange, "#60A5FA"];
+const avatarColors = [
+  colors.pink,
+  colors.violet,
+  colors.mint,
+  colors.orange,
+  "#60A5FA",
+];
 const hapticOptions: HapticIntensity[] = ["light", "medium", "heavy"];
 const hexColorPattern = /^#[0-9A-F]{6}$/i;
 
@@ -25,7 +47,9 @@ function WidgetPreview({ type }: { type: "home" | "lock" }) {
             <Text style={styles.miniWidgetText}>Pulse</Text>
           </View>
           <View style={styles.miniAppGrid}>
-            {Array.from({ length: 6 }).map((_, index) => <View key={`app-${index}`} style={styles.miniApp} />)}
+            {Array.from({ length: 6 }).map((_, index) => (
+              <View key={`app-${index}`} style={styles.miniApp} />
+            ))}
           </View>
         </View>
       ) : (
@@ -43,14 +67,17 @@ function WidgetPreview({ type }: { type: "home" | "lock" }) {
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
-  const hydrated = useAppStore((state) => state.hydrated);
-  const error = useAppStore((state) => state.error);
-  const user = useAppStore((state) => state.user);
-  const clearError = useAppStore((state) => state.clearError);
-  const updateDisplayName = useAppStore((state) => state.updateDisplayName);
-  const updateAvatarColor = useAppStore((state) => state.updateAvatarColor);
-  const updateHapticIntensity = useAppStore((state) => state.updateHapticIntensity);
-  const unpair = useAppStore((state) => state.unpair);
+  const { signOut } = useAuth();
+  const hydrated = useAppStore((s) => s.hydrated);
+  const error = useAppStore((s) => s.error);
+  const user = useAppStore((s) => s.user);
+  const clearError = useAppStore((s) => s.clearError);
+  const updateDisplayName = useAppStore((s) => s.updateDisplayName);
+  const updateAvatarColor = useAppStore((s) => s.updateAvatarColor);
+  const updateHapticIntensity = useAppStore((s) => s.updateHapticIntensity);
+  const unpair = useAppStore((s) => s.unpair);
+  const reset = useAppStore((s) => s.reset);
+
   const [displayName, setDisplayName] = useState(user.displayName);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [showUnpairModal, setShowUnpairModal] = useState(false);
@@ -96,10 +123,9 @@ export default function SettingsScreen() {
       setColorError("Use a six-digit hex color, like #A78BFA.");
       return;
     }
-
-    setCustomColors((existingColors) => (
-      existingColors.includes(normalized) ? existingColors : [...existingColors, normalized]
-    ));
+    setCustomColors((existing) =>
+      existing.includes(normalized) ? existing : [...existing, normalized],
+    );
     updateAvatarColor(normalized);
     setColorHex(normalized);
     setColorError(null);
@@ -121,14 +147,20 @@ export default function SettingsScreen() {
     (intensity: HapticIntensity) => {
       updateHapticIntensity(intensity);
       void triggerHaptic(intensity);
-      setNotice(`${intensity[0].toUpperCase()}${intensity.slice(1)} haptics selected`);
+      setNotice(
+        `${intensity[0].toUpperCase()}${intensity.slice(1)} haptics selected`,
+      );
     },
     [updateHapticIntensity],
   );
 
   const handleNotifications = useCallback(() => {
     setNotificationsEnabled((enabled) => !enabled);
-    setNotice(notificationsEnabled ? "Notifications paused" : "Notifications enabled for this demo");
+    setNotice(
+      notificationsEnabled
+        ? "Notifications paused"
+        : "Notifications enabled for this demo",
+    );
     void triggerHaptic("light");
   }, [notificationsEnabled]);
 
@@ -143,8 +175,18 @@ export default function SettingsScreen() {
   const handleConfirmUnpair = useCallback(() => {
     unpair();
     setShowUnpairModal(false);
-    router.replace("/auth");
+    router.replace("/pairing");
   }, [unpair]);
+
+  const handleSignOut = useCallback(async () => {
+    try {
+      await signOut();
+      reset();
+      router.replace("/auth");
+    } catch {
+      setNotice("Sign out failed. Please try again.");
+    }
+  }, [signOut, reset]);
 
   const handleDiscord = useCallback(async () => {
     const url = "https://discord.com";
@@ -180,62 +222,108 @@ export default function SettingsScreen() {
       <Stack.Screen options={{ title: "Settings", headerShown: false }} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={[styles.content, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 88 }]}
+        contentContainerStyle={[
+          styles.content,
+          {
+            paddingTop: insets.top + 20,
+            paddingBottom: insets.bottom + 88,
+          },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
           <Text style={styles.title}>Settings</Text>
-          <Text style={styles.subtitle}>Make the little details feel like yours.</Text>
+          <Text style={styles.subtitle}>
+            Make the little details feel like yours.
+          </Text>
         </View>
 
+        {/* Widget Guide */}
         <View style={styles.sectionBlock}>
           <SectionLabel>Widget guide</SectionLabel>
           <View style={styles.widgetRow}>
             <View style={styles.widgetCard}>
               <WidgetPreview type="home" />
               <View style={styles.widgetCardFooter}>
-                <View style={styles.stepBadge}><Text style={styles.stepText}>01</Text></View>
+                <View style={styles.stepBadge}>
+                  <Text style={styles.stepText}>01</Text>
+                </View>
                 <View style={styles.widgetCopy}>
                   <Text style={styles.widgetTitle}>Home screen</Text>
-                  <Text style={styles.widgetDescription}>Long press your home screen, then add Pulse.</Text>
+                  <Text style={styles.widgetDescription}>
+                    Long press your home screen, then add Pulse.
+                  </Text>
                 </View>
               </View>
             </View>
             <View style={styles.widgetCard}>
               <WidgetPreview type="lock" />
               <View style={styles.widgetCardFooter}>
-                <View style={[styles.stepBadge, styles.stepBadgePink]}><Text style={styles.stepText}>02</Text></View>
+                <View style={[styles.stepBadge, styles.stepBadgePink]}>
+                  <Text style={styles.stepText}>02</Text>
+                </View>
                 <View style={styles.widgetCopy}>
                   <Text style={styles.widgetTitle}>Lock screen</Text>
-                  <Text style={styles.widgetDescription}>Add a quiet pulse beside your clock.</Text>
+                  <Text style={styles.widgetDescription}>
+                    Add a quiet pulse beside your clock.
+                  </Text>
                 </View>
               </View>
             </View>
           </View>
-          <Pressable accessibilityRole="button" onPress={handleNotifications} style={({ pressed }) => [styles.notificationButton, notificationsEnabled && styles.notificationButtonActive, pressed && styles.buttonPressed]}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={handleNotifications}
+            style={({ pressed }) => [
+              styles.notificationButton,
+              notificationsEnabled && styles.notificationButtonActive,
+              pressed && styles.buttonPressed,
+            ]}
+          >
             <View style={styles.notificationIcon}>
-              <Ionicons name={notificationsEnabled ? "notifications" : "notifications-outline"} size={18} color={colors.violetBright} />
+              <Ionicons
+                name={
+                  notificationsEnabled
+                    ? "notifications"
+                    : "notifications-outline"
+                }
+                size={18}
+                color={colors.violetBright}
+              />
             </View>
             <View style={styles.notificationCopy}>
-              <Text style={styles.notificationTitle}>{notificationsEnabled ? "Notifications are on" : "Enable notifications"}</Text>
-              <Text style={styles.notificationSubtitle}>Get a gentle nudge when your person checks in.</Text>
+              <Text style={styles.notificationTitle}>
+                {notificationsEnabled
+                  ? "Notifications are on"
+                  : "Enable notifications"}
+              </Text>
+              <Text style={styles.notificationSubtitle}>
+                Get a gentle nudge when your person checks in.
+              </Text>
             </View>
-            <Ionicons name="chevron-forward" size={17} color={colors.textSecondary} />
+            <Ionicons
+              name="chevron-forward"
+              size={17}
+              color={colors.textSecondary}
+            />
           </Pressable>
         </View>
 
+        {/* Profile Settings */}
         <View style={styles.sectionBlock}>
           <SectionLabel>Profile</SectionLabel>
           <View testID="color-picker-screen" style={styles.card}>
             <View style={styles.profileTop}>
-              <View testID="color-preview">
-                <View testID="color-swatch">
-                  <Avatar color={user.avatarColor} name={displayName} size={52} />
-                </View>
-              </View>
+              <Avatar
+                color={user.avatarColor}
+                name={displayName}
+                size={52}
+              />
               <View style={styles.profileCopy}>
                 <Text style={styles.profileLabel}>Your display name</Text>
-                <Text style={styles.profileSubtext}>This is how Alex sees you.</Text>
+                <Text style={styles.profileSubtext}>
+                  This is how {user.partnerName} sees you.
+                </Text>
               </View>
             </View>
             <View style={styles.profileEditRow}>
@@ -247,24 +335,42 @@ export default function SettingsScreen() {
                 style={styles.nameInput}
                 value={displayName}
               />
-              <Pressable accessibilityRole="button" onPress={handleSaveProfile} style={({ pressed }) => [styles.saveButton, pressed && styles.buttonPressed]} testID="save-color-button">
+              <Pressable
+                accessibilityRole="button"
+                onPress={handleSaveProfile}
+                style={({ pressed }) => [
+                  styles.saveButton,
+                  pressed && styles.buttonPressed,
+                ]}
+              >
                 <Text style={styles.saveText}>Save</Text>
               </Pressable>
             </View>
-            <View testID="palette-screen" style={styles.paletteBlock}>
+            <View style={styles.paletteBlock}>
               <View style={styles.colorRow}>
                 <Text style={styles.colorLabel}>Avatar color</Text>
-                <View testID="palette-list" style={styles.colorOptions}>
-                  <View testID="palette-item" style={styles.colorOptionsInner}>
+                <View style={styles.colorOptions}>
+                  <View style={styles.colorOptionsInner}>
                     {paletteColors.map((color) => (
                       <Pressable
                         key={color}
                         accessibilityRole="button"
                         accessibilityLabel={`Choose ${color} avatar color`}
                         onPress={() => handleAvatarColor(color)}
-                        style={[styles.colorOption, { backgroundColor: color }, user.avatarColor === color && styles.colorOptionActive]}
+                        style={[
+                          styles.colorOption,
+                          { backgroundColor: color },
+                          user.avatarColor === color &&
+                            styles.colorOptionActive,
+                        ]}
                       >
-                        {user.avatarColor === color ? <Ionicons name="checkmark" size={15} color={colors.background} /> : null}
+                        {user.avatarColor === color ? (
+                          <Ionicons
+                            name="checkmark"
+                            size={15}
+                            color={colors.background}
+                          />
+                        ) : null}
                       </Pressable>
                     ))}
                   </View>
@@ -279,14 +385,15 @@ export default function SettingsScreen() {
                   placeholder="#A78BFA"
                   placeholderTextColor={colors.textTertiary}
                   style={styles.colorHexInput}
-                  testID="color-hex-input"
                   value={colorHex}
                 />
                 <Pressable
                   accessibilityRole="button"
                   onPress={handleAddColor}
-                  style={({ pressed }) => [styles.addColorButton, pressed && styles.buttonPressed]}
-                  testID="add-palette-button"
+                  style={({ pressed }) => [
+                    styles.addColorButton,
+                    pressed && styles.buttonPressed,
+                  ]}
                 >
                   <Ionicons name="add" size={17} color={colors.background} />
                   <Text style={styles.addColorText}>Add</Text>
@@ -295,17 +402,28 @@ export default function SettingsScreen() {
                   accessibilityRole="button"
                   accessibilityLabel="Reset custom colors"
                   onPress={handleResetColors}
-                  style={({ pressed }) => [styles.deletePaletteButton, pressed && styles.buttonPressed]}
-                  testID="delete-palette-button"
+                  style={({ pressed }) => [
+                    styles.deletePaletteButton,
+                    pressed && styles.buttonPressed,
+                  ]}
                 >
-                  <Ionicons name="trash-outline" size={16} color={colors.pinkSoft} />
+                  <Ionicons
+                    name="trash-outline"
+                    size={16}
+                    color={colors.pinkSoft}
+                  />
                 </Pressable>
               </View>
-              {colorError ? <Text selectable style={styles.colorError}>{colorError}</Text> : null}
+              {colorError ? (
+                <Text selectable style={styles.colorError}>
+                  {colorError}
+                </Text>
+              ) : null}
             </View>
           </View>
         </View>
 
+        {/* Haptic Intensity */}
         <View style={styles.sectionBlock}>
           <SectionLabel>Haptic intensity</SectionLabel>
           <View style={styles.segmentedControl}>
@@ -314,47 +432,121 @@ export default function SettingsScreen() {
                 key={intensity}
                 accessibilityRole="button"
                 onPress={() => handleHapticIntensity(intensity)}
-                style={[styles.segment, user.hapticIntensity === intensity && styles.segmentActive]}
+                style={[
+                  styles.segment,
+                  user.hapticIntensity === intensity && styles.segmentActive,
+                ]}
               >
-                <Text style={[styles.segmentText, user.hapticIntensity === intensity && styles.segmentTextActive]}>{intensity[0].toUpperCase()}{intensity.slice(1)}</Text>
+                <Text
+                  style={[
+                    styles.segmentText,
+                    user.hapticIntensity === intensity &&
+                      styles.segmentTextActive,
+                  ]}
+                >
+                  {intensity[0].toUpperCase()}
+                  {intensity.slice(1)}
+                </Text>
               </Pressable>
             ))}
           </View>
         </View>
 
+        {/* Pairing */}
         <View style={styles.sectionBlock}>
           <SectionLabel>Pairing</SectionLabel>
           <View style={styles.pairingCard}>
-            <Avatar color={user.partnerAvatarColor} name={user.partnerName} size={45} online />
+            <Avatar
+              color={user.partnerAvatarColor}
+              name={user.partnerName}
+              size={45}
+              online
+            />
             <View style={styles.pairingCopy}>
               <Text style={styles.pairingLabel}>Currently paired with</Text>
               <Text style={styles.pairingName}>{user.partnerName}</Text>
             </View>
-            <Pressable accessibilityRole="button" onPress={handleUnpair} style={({ pressed }) => [styles.unpairButton, pressed && styles.buttonPressed]}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={handleUnpair}
+              style={({ pressed }) => [
+                styles.unpairButton,
+                pressed && styles.buttonPressed,
+              ]}
+            >
               <Text style={styles.unpairText}>Unpair</Text>
             </Pressable>
           </View>
         </View>
 
+        {/* App Info */}
         <View style={styles.footer}>
-          <Text style={styles.version}>Pulse v1.0.0 · Local demo mode</Text>
-          <Pressable accessibilityRole="link" onPress={handleDiscord} style={styles.discordButton}>
-            <Ionicons name="logo-discord" size={16} color={colors.violetBright} />
+          <Text style={styles.version}>Pulse v1.0.0</Text>
+          <Pressable
+            accessibilityRole="link"
+            onPress={handleDiscord}
+            style={styles.discordButton}
+          >
+            <Ionicons
+              name="logo-discord"
+              size={16}
+              color={colors.violetBright}
+            />
             <Text style={styles.discordText}>Join the Discord</Text>
           </Pressable>
         </View>
+
+        {/* Sign Out */}
+        <Pressable
+          accessibilityRole="button"
+          onPress={handleSignOut}
+          style={({ pressed }) => [
+            styles.signOutButton,
+            pressed && styles.buttonPressed,
+          ]}
+        >
+          <Text style={styles.signOutText}>Sign Out</Text>
+        </Pressable>
+
         {notice ? <Text style={styles.notice}>{notice}</Text> : null}
       </ScrollView>
 
-      <Modal animationType="fade" onRequestClose={handleCancelUnpair} transparent visible={showUnpairModal}>
+      {/* Unpair Confirmation Modal */}
+      <Modal
+        animationType="fade"
+        onRequestClose={handleCancelUnpair}
+        transparent
+        visible={showUnpairModal}
+      >
         <View style={styles.modalBackdrop}>
-          <View style={[styles.modalCard, { paddingBottom: insets.bottom + 20 }]}>
-            <View style={styles.modalIcon}><Ionicons name="link-outline" size={24} color={colors.pink} /></View>
-            <Text style={styles.modalTitle}>Unpair from Alex?</Text>
-            <Text style={styles.modalMessage}>Your local timeline and partner connection will be cleared. You can pair again anytime.</Text>
+          <View
+            style={[styles.modalCard, { paddingBottom: insets.bottom + 20 }]}
+          >
+            <View style={styles.modalIcon}>
+              <Ionicons name="link-outline" size={24} color={colors.pink} />
+            </View>
+            <Text style={styles.modalTitle}>
+              Unpair from {user.partnerName}?
+            </Text>
+            <Text style={styles.modalMessage}>
+              Your timeline and partner connection will be cleared. You can pair
+              again anytime.
+            </Text>
             <View style={styles.modalActions}>
-              <Pressable accessibilityRole="button" onPress={handleCancelUnpair} style={styles.modalCancel}><Text style={styles.modalCancelText}>Keep connection</Text></Pressable>
-              <Pressable accessibilityRole="button" onPress={handleConfirmUnpair} style={styles.modalConfirm}><Text style={styles.modalConfirmText}>Unpair</Text></Pressable>
+              <Pressable
+                accessibilityRole="button"
+                onPress={handleCancelUnpair}
+                style={styles.modalCancel}
+              >
+                <Text style={styles.modalCancelText}>Keep connection</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                onPress={handleConfirmUnpair}
+                style={styles.modalConfirm}
+              >
+                <Text style={styles.modalConfirmText}>Unpair</Text>
+              </Pressable>
             </View>
           </View>
         </View>
@@ -373,9 +565,7 @@ const styles = StyleSheet.create({
     gap: 26,
     backgroundColor: colors.background,
   },
-  header: {
-    gap: 6,
-  },
+  header: { gap: 6 },
   title: {
     color: colors.white,
     fontFamily: Fonts.bold,
@@ -387,17 +577,13 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.regular,
     fontSize: 13,
   },
-  sectionBlock: {
-    gap: 12,
-  },
-  widgetRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
+  sectionBlock: { gap: 12 },
+  widgetRow: { flexDirection: "row", gap: 10 },
   widgetCard: {
     flex: 1,
     overflow: "hidden",
     borderRadius: radii.medium,
+    borderCurve: "continuous",
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
@@ -409,14 +595,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 14,
+    borderCurve: "continuous",
     backgroundColor: "#211B38",
     borderWidth: 1,
     borderColor: "#54467B",
   },
-  lockPreview: {
-    backgroundColor: "#30252D",
-    borderColor: "#644257",
-  },
+  lockPreview: { backgroundColor: "#30252D", borderColor: "#644257" },
   previewNotch: {
     position: "absolute",
     top: 7,
@@ -425,10 +609,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: colors.background,
   },
-  homeWidgets: {
-    width: "75%",
-    gap: 10,
-  },
+  homeWidgets: { width: "75%", gap: 10 },
   miniPulseWidget: {
     height: 43,
     paddingHorizontal: 10,
@@ -436,6 +617,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
     borderRadius: 9,
+    borderCurve: "continuous",
     backgroundColor: "#0F0E1A",
   },
   miniWidgetText: {
@@ -443,11 +625,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.semiBold,
     fontSize: 10,
   },
-  miniAppGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 7,
-  },
+  miniAppGrid: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
   miniApp: {
     width: 18,
     height: 18,
@@ -463,12 +641,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     borderRadius: 9,
+    borderCurve: "continuous",
     backgroundColor: "#141116",
   },
-  lockLines: {
-    flex: 1,
-    gap: 5,
-  },
+  lockLines: { flex: 1, gap: 5 },
   lockLineShort: {
     width: "60%",
     height: 5,
@@ -493,20 +669,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 8,
+    borderCurve: "continuous",
     backgroundColor: "#33285A",
   },
-  stepBadgePink: {
-    backgroundColor: "#4A263B",
-  },
+  stepBadgePink: { backgroundColor: "#4A263B" },
   stepText: {
     color: colors.violetBright,
     fontFamily: Fonts.bold,
     fontSize: 9,
   },
-  widgetCopy: {
-    flex: 1,
-    gap: 4,
-  },
+  widgetCopy: { flex: 1, gap: 4 },
   widgetTitle: {
     color: colors.white,
     fontFamily: Fonts.semiBold,
@@ -525,6 +697,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     borderRadius: radii.medium,
+    borderCurve: "continuous",
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
@@ -539,12 +712,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 12,
+    borderCurve: "continuous",
     backgroundColor: "#241C3C",
   },
-  notificationCopy: {
-    flex: 1,
-    gap: 3,
-  },
+  notificationCopy: { flex: 1, gap: 3 },
   notificationTitle: {
     color: colors.white,
     fontFamily: Fonts.semiBold,
@@ -559,22 +730,15 @@ const styles = StyleSheet.create({
     gap: 16,
     padding: 16,
     borderRadius: radii.medium,
+    borderCurve: "continuous",
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
     ...shadows.card,
   },
-  paletteBlock: {
-    gap: 12,
-  },
-  profileTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  profileCopy: {
-    gap: 4,
-  },
+  paletteBlock: { gap: 12 },
+  profileTop: { flexDirection: "row", alignItems: "center", gap: 12 },
+  profileCopy: { gap: 4 },
   profileLabel: {
     color: colors.white,
     fontFamily: Fonts.semiBold,
@@ -585,15 +749,13 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.regular,
     fontSize: 11,
   },
-  profileEditRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
+  profileEditRow: { flexDirection: "row", gap: 8 },
   nameInput: {
     flex: 1,
     minHeight: 46,
     paddingHorizontal: 13,
     borderRadius: 12,
+    borderCurve: "continuous",
     color: colors.white,
     fontFamily: Fonts.regular,
     fontSize: 13,
@@ -607,6 +769,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 12,
+    borderCurve: "continuous",
     backgroundColor: colors.violet,
   },
   saveText: {
@@ -624,24 +787,15 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.medium,
     fontSize: 12,
   },
-  colorOptions: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  colorOptionsInner: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  customColorRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
+  colorOptions: { flexDirection: "row", gap: 10 },
+  colorOptionsInner: { flexDirection: "row", gap: 10 },
+  customColorRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   colorHexInput: {
     flex: 1,
     minHeight: 44,
     paddingHorizontal: 12,
     borderRadius: 12,
+    borderCurve: "continuous",
     color: colors.white,
     fontFamily: Fonts.medium,
     fontSize: 12,
@@ -657,6 +811,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 4,
     borderRadius: 12,
+    borderCurve: "continuous",
     backgroundColor: colors.violet,
   },
   addColorText: {
@@ -670,6 +825,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 12,
+    borderCurve: "continuous",
     backgroundColor: "#40232D",
   },
   colorError: {
@@ -684,15 +840,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 14,
   },
-  colorOptionActive: {
-    borderWidth: 2,
-    borderColor: colors.white,
-  },
+  colorOptionActive: { borderWidth: 2, borderColor: colors.white },
   segmentedControl: {
     padding: 4,
     flexDirection: "row",
     gap: 4,
     borderRadius: 14,
+    borderCurve: "continuous",
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
@@ -703,6 +857,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,
+    borderCurve: "continuous",
   },
   segmentActive: {
     backgroundColor: colors.surfaceElevated,
@@ -716,9 +871,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.medium,
     fontSize: 12,
   },
-  segmentTextActive: {
-    color: colors.violetBright,
-  },
+  segmentTextActive: { color: colors.violetBright },
   pairingCard: {
     minHeight: 80,
     padding: 14,
@@ -726,14 +879,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 11,
     borderRadius: radii.medium,
+    borderCurve: "continuous",
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
   },
-  pairingCopy: {
-    flex: 1,
-    gap: 4,
-  },
+  pairingCopy: { flex: 1, gap: 4 },
   pairingLabel: {
     color: colors.textSecondary,
     fontFamily: Fonts.regular,
@@ -750,6 +901,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 12,
+    borderCurve: "continuous",
     backgroundColor: "#40232D",
   },
   unpairText: {
@@ -757,11 +909,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.semiBold,
     fontSize: 12,
   },
-  footer: {
-    alignItems: "center",
-    gap: 9,
-    paddingTop: 3,
-  },
+  footer: { alignItems: "center", gap: 9, paddingTop: 3 },
   version: {
     color: colors.textTertiary,
     fontFamily: Fonts.regular,
@@ -779,15 +927,28 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.medium,
     fontSize: 12,
   },
+  signOutButton: {
+    minHeight: 52,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 15,
+    borderCurve: "continuous",
+    backgroundColor: "#3D1C1C",
+    borderWidth: 1,
+    borderColor: "#6B2E2E",
+  },
+  signOutText: {
+    color: colors.danger,
+    fontFamily: Fonts.semiBold,
+    fontSize: 14,
+  },
   notice: {
     alignSelf: "center",
     color: colors.mintSoft,
     fontFamily: Fonts.medium,
     fontSize: 12,
   },
-  buttonPressed: {
-    opacity: 0.72,
-  },
+  buttonPressed: { opacity: 0.72 },
   modalBackdrop: {
     flex: 1,
     alignItems: "center",
@@ -812,6 +973,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 18,
+    borderCurve: "continuous",
     backgroundColor: "#3D2030",
   },
   modalTitle: {
@@ -839,6 +1001,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 13,
+    borderCurve: "continuous",
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
@@ -854,6 +1017,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 13,
+    borderCurve: "continuous",
     backgroundColor: colors.pink,
   },
   modalConfirmText: {

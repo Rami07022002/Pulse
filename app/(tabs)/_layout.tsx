@@ -1,12 +1,23 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import type { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
-import { Pressable, StyleSheet, View, type GestureResponderEvent } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  View,
+  type GestureResponderEvent,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "@/constants/theme";
 import { triggerHaptic } from "@/lib/haptics";
+import { useRealtimeSubscriptions } from "@/lib/use-realtime";
 
-function TabButton({ children, onPress, accessibilityState, accessibilityLabel }: BottomTabBarButtonProps) {
+function TabButton({
+  children,
+  onPress,
+  accessibilityState,
+  accessibilityLabel,
+}: BottomTabBarButtonProps) {
   const focused = accessibilityState?.selected ?? false;
   return (
     <Pressable
@@ -19,13 +30,19 @@ function TabButton({ children, onPress, accessibilityState, accessibilityLabel }
       }}
       style={styles.tabButton}
     >
-      <View style={[styles.tabIcon, focused && styles.tabIconActive]}>{children}</View>
+      <View style={[styles.tabIcon, focused && styles.tabIconActive]}>
+        {children}
+      </View>
     </Pressable>
   );
 }
 
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
+
+  // Set up Supabase Realtime subscriptions for partner data
+  useRealtimeSubscriptions();
+
   return (
     <Tabs
       screenOptions={{
@@ -44,21 +61,27 @@ export default function TabsLayout() {
         name="dashboard"
         options={{
           tabBarAccessibilityLabel: "Dashboard",
-          tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" color={color} size={size} />
+          ),
         }}
       />
       <Tabs.Screen
         name="timeline"
         options={{
           tabBarAccessibilityLabel: "Timeline",
-          tabBarIcon: ({ color, size }) => <Ionicons name="time-outline" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="time-outline" color={color} size={size} />
+          ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           tabBarAccessibilityLabel: "Settings",
-          tabBarIcon: ({ color, size }) => <Ionicons name="settings-outline" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings-outline" color={color} size={size} />
+          ),
         }}
       />
     </Tabs>
@@ -84,6 +107,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 14,
+    borderCurve: "continuous",
   },
   tabIconActive: {
     backgroundColor: "#211A35",
