@@ -1,7 +1,75 @@
 {
   "version": 1,
-  "generatedAt": 1789146801194,
+  "generatedAt": 1789153488418,
   "entries": {
+    "Index@app/index.tsx:17": {
+      "element": {
+        "file": "app/index.tsx",
+        "line": 17
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.container",
+          "file": "app/index.tsx",
+          "defLine": 36,
+          "properties": {
+            "flex": {
+              "line": 37,
+              "col": 10,
+              "endCol": 11,
+              "raw": "1"
+            },
+            "alignItems": {
+              "line": 38,
+              "col": 16,
+              "endCol": 24,
+              "raw": "\"center\""
+            },
+            "justifyContent": {
+              "line": 39,
+              "col": 20,
+              "endCol": 28,
+              "raw": "\"center\""
+            },
+            "gap": {
+              "line": 40,
+              "col": 9,
+              "endCol": 11,
+              "raw": "20"
+            }
+          }
+        }
+      ]
+    },
+    "Index@app/index.tsx:18": {
+      "element": {
+        "file": "app/index.tsx",
+        "line": 18
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.brand",
+          "file": "app/index.tsx",
+          "defLine": 43,
+          "properties": {
+            "fontSize": {
+              "line": 46,
+              "col": 14,
+              "endCol": 16,
+              "raw": "40"
+            },
+            "letterSpacing": {
+              "line": 47,
+              "col": 19,
+              "endCol": 23,
+              "raw": "-1.4"
+            }
+          }
+        }
+      ]
+    },
     "TabButton@app/(tabs)/_layout.tsx:12": {
       "element": {
         "file": "app/(tabs)/_layout.tsx",
@@ -92,69 +160,21 @@
         }
       ]
     },
-    "Index@app/index.tsx:17": {
+    "RootLayout@app/_layout.tsx:55": {
       "element": {
-        "file": "app/index.tsx",
-        "line": 17
+        "file": "app/_layout.tsx",
+        "line": 55
       },
       "styles": [
         {
-          "origin": "stylesheet",
-          "ref": "styles.container",
-          "file": "app/index.tsx",
-          "defLine": 36,
+          "origin": "inline",
+          "file": "app/_layout.tsx",
           "properties": {
             "flex": {
-              "line": 37,
-              "col": 10,
-              "endCol": 11,
+              "line": 55,
+              "col": 43,
+              "endCol": 44,
               "raw": "1"
-            },
-            "alignItems": {
-              "line": 38,
-              "col": 16,
-              "endCol": 24,
-              "raw": "\"center\""
-            },
-            "justifyContent": {
-              "line": 39,
-              "col": 20,
-              "endCol": 28,
-              "raw": "\"center\""
-            },
-            "gap": {
-              "line": 40,
-              "col": 9,
-              "endCol": 11,
-              "raw": "20"
-            }
-          }
-        }
-      ]
-    },
-    "Index@app/index.tsx:18": {
-      "element": {
-        "file": "app/index.tsx",
-        "line": 18
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.brand",
-          "file": "app/index.tsx",
-          "defLine": 43,
-          "properties": {
-            "fontSize": {
-              "line": 46,
-              "col": 14,
-              "endCol": 16,
-              "raw": "40"
-            },
-            "letterSpacing": {
-              "line": 47,
-              "col": 19,
-              "endCol": 23,
-              "raw": "-1.4"
             }
           }
         }
@@ -1049,821 +1069,6 @@
               "col": 9,
               "endCol": 11,
               "raw": "10"
-            }
-          }
-        }
-      ]
-    },
-    "Avatar@components/pulse-ui.tsx:26": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 26
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.avatar",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 160,
-          "properties": {
-            "alignItems": {
-              "line": 161,
-              "col": 16,
-              "endCol": 24,
-              "raw": "\"center\""
-            },
-            "justifyContent": {
-              "line": 162,
-              "col": 20,
-              "endCol": 28,
-              "raw": "\"center\""
-            },
-            "position": {
-              "line": 163,
-              "col": 14,
-              "endCol": 24,
-              "raw": "\"relative\""
-            }
-          }
-        }
-      ]
-    },
-    "Avatar@components/pulse-ui.tsx:27": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 27
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.avatarText",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 165,
-          "properties": {}
-        }
-      ]
-    },
-    "Avatar@components/pulse-ui.tsx:28": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 28
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.onlineDot",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 169,
-          "properties": {
-            "position": {
-              "line": 170,
-              "col": 14,
-              "endCol": 24,
-              "raw": "\"absolute\""
-            },
-            "right": {
-              "line": 171,
-              "col": 11,
-              "endCol": 13,
-              "raw": "-1"
-            },
-            "bottom": {
-              "line": 172,
-              "col": 12,
-              "endCol": 13,
-              "raw": "1"
-            },
-            "width": {
-              "line": 173,
-              "col": 11,
-              "endCol": 13,
-              "raw": "12"
-            },
-            "height": {
-              "line": 174,
-              "col": 12,
-              "endCol": 14,
-              "raw": "12"
-            },
-            "borderRadius": {
-              "line": 175,
-              "col": 18,
-              "endCol": 19,
-              "raw": "6"
-            },
-            "borderWidth": {
-              "line": 177,
-              "col": 17,
-              "endCol": 18,
-              "raw": "2"
-            }
-          }
-        }
-      ]
-    },
-    "IconButton@components/pulse-ui.tsx:43": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 43
-      },
-      "styles": [
-        {
-          "origin": "dynamic",
-          "resolvable": false
-        }
-      ]
-    },
-    "SectionLabel@components/pulse-ui.tsx:62": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 62
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.sectionLabelRow",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 190,
-          "properties": {
-            "flexDirection": {
-              "line": 191,
-              "col": 19,
-              "endCol": 24,
-              "raw": "\"row\""
-            },
-            "alignItems": {
-              "line": 192,
-              "col": 16,
-              "endCol": 24,
-              "raw": "\"center\""
-            },
-            "justifyContent": {
-              "line": 193,
-              "col": 20,
-              "endCol": 35,
-              "raw": "\"space-between\""
-            }
-          }
-        }
-      ]
-    },
-    "SectionLabel@components/pulse-ui.tsx:63": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 63
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.sectionLabel",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 195,
-          "properties": {
-            "fontSize": {
-              "line": 198,
-              "col": 14,
-              "endCol": 16,
-              "raw": "12"
-            },
-            "letterSpacing": {
-              "line": 199,
-              "col": 19,
-              "endCol": 22,
-              "raw": "1.4"
-            },
-            "textTransform": {
-              "line": 200,
-              "col": 19,
-              "endCol": 30,
-              "raw": "\"uppercase\""
-            }
-          }
-        }
-      ]
-    },
-    "SectionLabel@components/pulse-ui.tsx:65": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 65
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.sectionAction",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 202,
-          "properties": {
-            "flexDirection": {
-              "line": 203,
-              "col": 19,
-              "endCol": 24,
-              "raw": "\"row\""
-            },
-            "alignItems": {
-              "line": 204,
-              "col": 16,
-              "endCol": 24,
-              "raw": "\"center\""
-            },
-            "minHeight": {
-              "line": 205,
-              "col": 15,
-              "endCol": 17,
-              "raw": "44"
-            },
-            "gap": {
-              "line": 206,
-              "col": 9,
-              "endCol": 10,
-              "raw": "3"
-            }
-          }
-        }
-      ]
-    },
-    "SectionLabel@components/pulse-ui.tsx:66": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 66
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.sectionActionText",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 208,
-          "properties": {
-            "fontSize": {
-              "line": 211,
-              "col": 14,
-              "endCol": 16,
-              "raw": "12"
-            }
-          }
-        }
-      ]
-    },
-    "ErrorState@components/pulse-ui.tsx:81": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 81
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.stateContainer",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 213,
-          "properties": {
-            "flex": {
-              "line": 214,
-              "col": 10,
-              "endCol": 11,
-              "raw": "1"
-            },
-            "alignItems": {
-              "line": 215,
-              "col": 16,
-              "endCol": 24,
-              "raw": "\"center\""
-            },
-            "justifyContent": {
-              "line": 216,
-              "col": 20,
-              "endCol": 28,
-              "raw": "\"center\""
-            },
-            "padding": {
-              "line": 217,
-              "col": 13,
-              "endCol": 15,
-              "raw": "32"
-            },
-            "gap": {
-              "line": 218,
-              "col": 9,
-              "endCol": 11,
-              "raw": "12"
-            }
-          }
-        }
-      ]
-    },
-    "ErrorState@components/pulse-ui.tsx:82": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 82
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.errorIcon",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 221,
-          "properties": {
-            "width": {
-              "line": 222,
-              "col": 11,
-              "endCol": 13,
-              "raw": "54"
-            },
-            "height": {
-              "line": 223,
-              "col": 12,
-              "endCol": 14,
-              "raw": "54"
-            },
-            "borderRadius": {
-              "line": 224,
-              "col": 18,
-              "endCol": 20,
-              "raw": "27"
-            },
-            "alignItems": {
-              "line": 225,
-              "col": 16,
-              "endCol": 24,
-              "raw": "\"center\""
-            },
-            "justifyContent": {
-              "line": 226,
-              "col": 20,
-              "endCol": 28,
-              "raw": "\"center\""
-            },
-            "backgroundColor": {
-              "line": 227,
-              "col": 21,
-              "endCol": 30,
-              "raw": "\"#271820\""
-            }
-          }
-        }
-      ]
-    },
-    "ErrorState@components/pulse-ui.tsx:85": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 85
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.stateTitle",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 229,
-          "properties": {
-            "fontSize": {
-              "line": 232,
-              "col": 14,
-              "endCol": 16,
-              "raw": "17"
-            },
-            "textAlign": {
-              "line": 233,
-              "col": 15,
-              "endCol": 23,
-              "raw": "\"center\""
-            }
-          }
-        }
-      ]
-    },
-    "ErrorState@components/pulse-ui.tsx:86": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 86
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.stateMessage",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 235,
-          "properties": {
-            "maxWidth": {
-              "line": 236,
-              "col": 14,
-              "endCol": 17,
-              "raw": "300"
-            },
-            "fontSize": {
-              "line": 239,
-              "col": 14,
-              "endCol": 16,
-              "raw": "13"
-            },
-            "lineHeight": {
-              "line": 240,
-              "col": 16,
-              "endCol": 18,
-              "raw": "20"
-            },
-            "textAlign": {
-              "line": 241,
-              "col": 15,
-              "endCol": 23,
-              "raw": "\"center\""
-            }
-          }
-        }
-      ]
-    },
-    "ErrorState@components/pulse-ui.tsx:87": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 87
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.retryButton",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 243,
-          "properties": {
-            "marginTop": {
-              "line": 244,
-              "col": 15,
-              "endCol": 16,
-              "raw": "8"
-            },
-            "minHeight": {
-              "line": 245,
-              "col": 15,
-              "endCol": 17,
-              "raw": "44"
-            },
-            "paddingHorizontal": {
-              "line": 246,
-              "col": 23,
-              "endCol": 25,
-              "raw": "20"
-            },
-            "justifyContent": {
-              "line": 247,
-              "col": 20,
-              "endCol": 28,
-              "raw": "\"center\""
-            }
-          }
-        }
-      ]
-    },
-    "ErrorState@components/pulse-ui.tsx:88": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 88
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.retryText",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 251,
-          "properties": {
-            "fontSize": {
-              "line": 254,
-              "col": 14,
-              "endCol": 16,
-              "raw": "13"
-            }
-          }
-        }
-      ]
-    },
-    "LoadingState@components/pulse-ui.tsx:96": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 96
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.stateContainer",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 213,
-          "properties": {
-            "flex": {
-              "line": 214,
-              "col": 10,
-              "endCol": 11,
-              "raw": "1"
-            },
-            "alignItems": {
-              "line": 215,
-              "col": 16,
-              "endCol": 24,
-              "raw": "\"center\""
-            },
-            "justifyContent": {
-              "line": 216,
-              "col": 20,
-              "endCol": 28,
-              "raw": "\"center\""
-            },
-            "padding": {
-              "line": 217,
-              "col": 13,
-              "endCol": 15,
-              "raw": "32"
-            },
-            "gap": {
-              "line": 218,
-              "col": 9,
-              "endCol": 11,
-              "raw": "12"
-            }
-          }
-        }
-      ]
-    },
-    "LoadingState@components/pulse-ui.tsx:98": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 98
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.stateTitle",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 229,
-          "properties": {
-            "fontSize": {
-              "line": 232,
-              "col": 14,
-              "endCol": 16,
-              "raw": "17"
-            },
-            "textAlign": {
-              "line": 233,
-              "col": 15,
-              "endCol": 23,
-              "raw": "\"center\""
-            }
-          }
-        }
-      ]
-    },
-    "PulseButton@components/pulse-ui.tsx:139": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 139
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.pulseWrap",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 256,
-          "properties": {
-            "width": {
-              "line": 257,
-              "col": 11,
-              "endCol": 14,
-              "raw": "220"
-            },
-            "height": {
-              "line": 258,
-              "col": 12,
-              "endCol": 15,
-              "raw": "220"
-            },
-            "alignItems": {
-              "line": 259,
-              "col": 16,
-              "endCol": 24,
-              "raw": "\"center\""
-            },
-            "justifyContent": {
-              "line": 260,
-              "col": 20,
-              "endCol": 28,
-              "raw": "\"center\""
-            }
-          }
-        }
-      ]
-    },
-    "PulseButton@components/pulse-ui.tsx:140": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 140
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.ripple",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 262,
-          "properties": {
-            "position": {
-              "line": 263,
-              "col": 14,
-              "endCol": 24,
-              "raw": "\"absolute\""
-            },
-            "width": {
-              "line": 264,
-              "col": 11,
-              "endCol": 14,
-              "raw": "132"
-            },
-            "height": {
-              "line": 265,
-              "col": 12,
-              "endCol": 15,
-              "raw": "132"
-            },
-            "borderRadius": {
-              "line": 266,
-              "col": 18,
-              "endCol": 20,
-              "raw": "66"
-            },
-            "borderWidth": {
-              "line": 267,
-              "col": 17,
-              "endCol": 18,
-              "raw": "1"
-            },
-            "backgroundColor": {
-              "line": 269,
-              "col": 21,
-              "endCol": 48,
-              "raw": "\"rgba(167, 139, 250, 0.08)\""
-            }
-          }
-        },
-        {
-          "origin": "dynamic",
-          "resolvable": false
-        }
-      ]
-    },
-    "PulseButton@components/pulse-ui.tsx:141": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 141
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.ripple",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 262,
-          "properties": {
-            "position": {
-              "line": 263,
-              "col": 14,
-              "endCol": 24,
-              "raw": "\"absolute\""
-            },
-            "width": {
-              "line": 264,
-              "col": 11,
-              "endCol": 14,
-              "raw": "132"
-            },
-            "height": {
-              "line": 265,
-              "col": 12,
-              "endCol": 15,
-              "raw": "132"
-            },
-            "borderRadius": {
-              "line": 266,
-              "col": 18,
-              "endCol": 20,
-              "raw": "66"
-            },
-            "borderWidth": {
-              "line": 267,
-              "col": 17,
-              "endCol": 18,
-              "raw": "1"
-            },
-            "backgroundColor": {
-              "line": 269,
-              "col": 21,
-              "endCol": 48,
-              "raw": "\"rgba(167, 139, 250, 0.08)\""
-            }
-          }
-        },
-        {
-          "origin": "dynamic",
-          "resolvable": false
-        }
-      ]
-    },
-    "PulseButton@components/pulse-ui.tsx:143": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 143
-      },
-      "styles": [
-        {
-          "origin": "dynamic",
-          "resolvable": false
-        }
-      ]
-    },
-    "PulseButton@components/pulse-ui.tsx:149": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 149
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.pulseInner",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 283,
-          "properties": {
-            "width": {
-              "line": 284,
-              "col": 11,
-              "endCol": 14,
-              "raw": "136"
-            },
-            "height": {
-              "line": 285,
-              "col": 12,
-              "endCol": 15,
-              "raw": "136"
-            },
-            "alignItems": {
-              "line": 286,
-              "col": 16,
-              "endCol": 24,
-              "raw": "\"center\""
-            },
-            "justifyContent": {
-              "line": 287,
-              "col": 20,
-              "endCol": 28,
-              "raw": "\"center\""
-            },
-            "gap": {
-              "line": 288,
-              "col": 9,
-              "endCol": 10,
-              "raw": "8"
-            },
-            "borderRadius": {
-              "line": 289,
-              "col": 18,
-              "endCol": 20,
-              "raw": "68"
-            }
-          }
-        }
-      ]
-    },
-    "PulseButton@components/pulse-ui.tsx:151": {
-      "element": {
-        "file": "components/pulse-ui.tsx",
-        "line": 151
-      },
-      "styles": [
-        {
-          "origin": "stylesheet",
-          "ref": "styles.pulseText",
-          "file": "components/pulse-ui.tsx",
-          "defLine": 292,
-          "properties": {
-            "fontSize": {
-              "line": 295,
-              "col": 14,
-              "endCol": 16,
-              "raw": "14"
-            },
-            "letterSpacing": {
-              "line": 296,
-              "col": 19,
-              "endCol": 22,
-              "raw": "0.1"
-            }
-          }
-        }
-      ]
-    },
-    "RootLayout@app/_layout.tsx:55": {
-      "element": {
-        "file": "app/_layout.tsx",
-        "line": 55
-      },
-      "styles": [
-        {
-          "origin": "inline",
-          "file": "app/_layout.tsx",
-          "properties": {
-            "flex": {
-              "line": 55,
-              "col": 43,
-              "endCol": 44,
-              "raw": "1"
             }
           }
         }
@@ -4570,6 +3775,801 @@
               "col": 14,
               "endCol": 16,
               "raw": "12"
+            }
+          }
+        }
+      ]
+    },
+    "Avatar@components/pulse-ui.tsx:26": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 26
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.avatar",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 160,
+          "properties": {
+            "alignItems": {
+              "line": 161,
+              "col": 16,
+              "endCol": 24,
+              "raw": "\"center\""
+            },
+            "justifyContent": {
+              "line": 162,
+              "col": 20,
+              "endCol": 28,
+              "raw": "\"center\""
+            },
+            "position": {
+              "line": 163,
+              "col": 14,
+              "endCol": 24,
+              "raw": "\"relative\""
+            }
+          }
+        }
+      ]
+    },
+    "Avatar@components/pulse-ui.tsx:27": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 27
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.avatarText",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 165,
+          "properties": {}
+        }
+      ]
+    },
+    "Avatar@components/pulse-ui.tsx:28": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 28
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.onlineDot",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 169,
+          "properties": {
+            "position": {
+              "line": 170,
+              "col": 14,
+              "endCol": 24,
+              "raw": "\"absolute\""
+            },
+            "right": {
+              "line": 171,
+              "col": 11,
+              "endCol": 13,
+              "raw": "-1"
+            },
+            "bottom": {
+              "line": 172,
+              "col": 12,
+              "endCol": 13,
+              "raw": "1"
+            },
+            "width": {
+              "line": 173,
+              "col": 11,
+              "endCol": 13,
+              "raw": "12"
+            },
+            "height": {
+              "line": 174,
+              "col": 12,
+              "endCol": 14,
+              "raw": "12"
+            },
+            "borderRadius": {
+              "line": 175,
+              "col": 18,
+              "endCol": 19,
+              "raw": "6"
+            },
+            "borderWidth": {
+              "line": 177,
+              "col": 17,
+              "endCol": 18,
+              "raw": "2"
+            }
+          }
+        }
+      ]
+    },
+    "IconButton@components/pulse-ui.tsx:43": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 43
+      },
+      "styles": [
+        {
+          "origin": "dynamic",
+          "resolvable": false
+        }
+      ]
+    },
+    "SectionLabel@components/pulse-ui.tsx:62": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 62
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.sectionLabelRow",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 190,
+          "properties": {
+            "flexDirection": {
+              "line": 191,
+              "col": 19,
+              "endCol": 24,
+              "raw": "\"row\""
+            },
+            "alignItems": {
+              "line": 192,
+              "col": 16,
+              "endCol": 24,
+              "raw": "\"center\""
+            },
+            "justifyContent": {
+              "line": 193,
+              "col": 20,
+              "endCol": 35,
+              "raw": "\"space-between\""
+            }
+          }
+        }
+      ]
+    },
+    "SectionLabel@components/pulse-ui.tsx:63": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 63
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.sectionLabel",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 195,
+          "properties": {
+            "fontSize": {
+              "line": 198,
+              "col": 14,
+              "endCol": 16,
+              "raw": "12"
+            },
+            "letterSpacing": {
+              "line": 199,
+              "col": 19,
+              "endCol": 22,
+              "raw": "1.4"
+            },
+            "textTransform": {
+              "line": 200,
+              "col": 19,
+              "endCol": 30,
+              "raw": "\"uppercase\""
+            }
+          }
+        }
+      ]
+    },
+    "SectionLabel@components/pulse-ui.tsx:65": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 65
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.sectionAction",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 202,
+          "properties": {
+            "flexDirection": {
+              "line": 203,
+              "col": 19,
+              "endCol": 24,
+              "raw": "\"row\""
+            },
+            "alignItems": {
+              "line": 204,
+              "col": 16,
+              "endCol": 24,
+              "raw": "\"center\""
+            },
+            "minHeight": {
+              "line": 205,
+              "col": 15,
+              "endCol": 17,
+              "raw": "44"
+            },
+            "gap": {
+              "line": 206,
+              "col": 9,
+              "endCol": 10,
+              "raw": "3"
+            }
+          }
+        }
+      ]
+    },
+    "SectionLabel@components/pulse-ui.tsx:66": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 66
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.sectionActionText",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 208,
+          "properties": {
+            "fontSize": {
+              "line": 211,
+              "col": 14,
+              "endCol": 16,
+              "raw": "12"
+            }
+          }
+        }
+      ]
+    },
+    "ErrorState@components/pulse-ui.tsx:81": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 81
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.stateContainer",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 213,
+          "properties": {
+            "flex": {
+              "line": 214,
+              "col": 10,
+              "endCol": 11,
+              "raw": "1"
+            },
+            "alignItems": {
+              "line": 215,
+              "col": 16,
+              "endCol": 24,
+              "raw": "\"center\""
+            },
+            "justifyContent": {
+              "line": 216,
+              "col": 20,
+              "endCol": 28,
+              "raw": "\"center\""
+            },
+            "padding": {
+              "line": 217,
+              "col": 13,
+              "endCol": 15,
+              "raw": "32"
+            },
+            "gap": {
+              "line": 218,
+              "col": 9,
+              "endCol": 11,
+              "raw": "12"
+            }
+          }
+        }
+      ]
+    },
+    "ErrorState@components/pulse-ui.tsx:82": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 82
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.errorIcon",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 221,
+          "properties": {
+            "width": {
+              "line": 222,
+              "col": 11,
+              "endCol": 13,
+              "raw": "54"
+            },
+            "height": {
+              "line": 223,
+              "col": 12,
+              "endCol": 14,
+              "raw": "54"
+            },
+            "borderRadius": {
+              "line": 224,
+              "col": 18,
+              "endCol": 20,
+              "raw": "27"
+            },
+            "alignItems": {
+              "line": 225,
+              "col": 16,
+              "endCol": 24,
+              "raw": "\"center\""
+            },
+            "justifyContent": {
+              "line": 226,
+              "col": 20,
+              "endCol": 28,
+              "raw": "\"center\""
+            },
+            "backgroundColor": {
+              "line": 227,
+              "col": 21,
+              "endCol": 30,
+              "raw": "\"#271820\""
+            }
+          }
+        }
+      ]
+    },
+    "ErrorState@components/pulse-ui.tsx:85": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 85
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.stateTitle",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 229,
+          "properties": {
+            "fontSize": {
+              "line": 232,
+              "col": 14,
+              "endCol": 16,
+              "raw": "17"
+            },
+            "textAlign": {
+              "line": 233,
+              "col": 15,
+              "endCol": 23,
+              "raw": "\"center\""
+            }
+          }
+        }
+      ]
+    },
+    "ErrorState@components/pulse-ui.tsx:86": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 86
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.stateMessage",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 235,
+          "properties": {
+            "maxWidth": {
+              "line": 236,
+              "col": 14,
+              "endCol": 17,
+              "raw": "300"
+            },
+            "fontSize": {
+              "line": 239,
+              "col": 14,
+              "endCol": 16,
+              "raw": "13"
+            },
+            "lineHeight": {
+              "line": 240,
+              "col": 16,
+              "endCol": 18,
+              "raw": "20"
+            },
+            "textAlign": {
+              "line": 241,
+              "col": 15,
+              "endCol": 23,
+              "raw": "\"center\""
+            }
+          }
+        }
+      ]
+    },
+    "ErrorState@components/pulse-ui.tsx:87": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 87
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.retryButton",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 243,
+          "properties": {
+            "marginTop": {
+              "line": 244,
+              "col": 15,
+              "endCol": 16,
+              "raw": "8"
+            },
+            "minHeight": {
+              "line": 245,
+              "col": 15,
+              "endCol": 17,
+              "raw": "44"
+            },
+            "paddingHorizontal": {
+              "line": 246,
+              "col": 23,
+              "endCol": 25,
+              "raw": "20"
+            },
+            "justifyContent": {
+              "line": 247,
+              "col": 20,
+              "endCol": 28,
+              "raw": "\"center\""
+            }
+          }
+        }
+      ]
+    },
+    "ErrorState@components/pulse-ui.tsx:88": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 88
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.retryText",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 251,
+          "properties": {
+            "fontSize": {
+              "line": 254,
+              "col": 14,
+              "endCol": 16,
+              "raw": "13"
+            }
+          }
+        }
+      ]
+    },
+    "LoadingState@components/pulse-ui.tsx:96": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 96
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.stateContainer",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 213,
+          "properties": {
+            "flex": {
+              "line": 214,
+              "col": 10,
+              "endCol": 11,
+              "raw": "1"
+            },
+            "alignItems": {
+              "line": 215,
+              "col": 16,
+              "endCol": 24,
+              "raw": "\"center\""
+            },
+            "justifyContent": {
+              "line": 216,
+              "col": 20,
+              "endCol": 28,
+              "raw": "\"center\""
+            },
+            "padding": {
+              "line": 217,
+              "col": 13,
+              "endCol": 15,
+              "raw": "32"
+            },
+            "gap": {
+              "line": 218,
+              "col": 9,
+              "endCol": 11,
+              "raw": "12"
+            }
+          }
+        }
+      ]
+    },
+    "LoadingState@components/pulse-ui.tsx:98": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 98
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.stateTitle",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 229,
+          "properties": {
+            "fontSize": {
+              "line": 232,
+              "col": 14,
+              "endCol": 16,
+              "raw": "17"
+            },
+            "textAlign": {
+              "line": 233,
+              "col": 15,
+              "endCol": 23,
+              "raw": "\"center\""
+            }
+          }
+        }
+      ]
+    },
+    "PulseButton@components/pulse-ui.tsx:139": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 139
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.pulseWrap",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 256,
+          "properties": {
+            "width": {
+              "line": 257,
+              "col": 11,
+              "endCol": 14,
+              "raw": "220"
+            },
+            "height": {
+              "line": 258,
+              "col": 12,
+              "endCol": 15,
+              "raw": "220"
+            },
+            "alignItems": {
+              "line": 259,
+              "col": 16,
+              "endCol": 24,
+              "raw": "\"center\""
+            },
+            "justifyContent": {
+              "line": 260,
+              "col": 20,
+              "endCol": 28,
+              "raw": "\"center\""
+            }
+          }
+        }
+      ]
+    },
+    "PulseButton@components/pulse-ui.tsx:140": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 140
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.ripple",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 262,
+          "properties": {
+            "position": {
+              "line": 263,
+              "col": 14,
+              "endCol": 24,
+              "raw": "\"absolute\""
+            },
+            "width": {
+              "line": 264,
+              "col": 11,
+              "endCol": 14,
+              "raw": "132"
+            },
+            "height": {
+              "line": 265,
+              "col": 12,
+              "endCol": 15,
+              "raw": "132"
+            },
+            "borderRadius": {
+              "line": 266,
+              "col": 18,
+              "endCol": 20,
+              "raw": "66"
+            },
+            "borderWidth": {
+              "line": 267,
+              "col": 17,
+              "endCol": 18,
+              "raw": "1"
+            },
+            "backgroundColor": {
+              "line": 269,
+              "col": 21,
+              "endCol": 48,
+              "raw": "\"rgba(167, 139, 250, 0.08)\""
+            }
+          }
+        },
+        {
+          "origin": "dynamic",
+          "resolvable": false
+        }
+      ]
+    },
+    "PulseButton@components/pulse-ui.tsx:141": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 141
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.ripple",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 262,
+          "properties": {
+            "position": {
+              "line": 263,
+              "col": 14,
+              "endCol": 24,
+              "raw": "\"absolute\""
+            },
+            "width": {
+              "line": 264,
+              "col": 11,
+              "endCol": 14,
+              "raw": "132"
+            },
+            "height": {
+              "line": 265,
+              "col": 12,
+              "endCol": 15,
+              "raw": "132"
+            },
+            "borderRadius": {
+              "line": 266,
+              "col": 18,
+              "endCol": 20,
+              "raw": "66"
+            },
+            "borderWidth": {
+              "line": 267,
+              "col": 17,
+              "endCol": 18,
+              "raw": "1"
+            },
+            "backgroundColor": {
+              "line": 269,
+              "col": 21,
+              "endCol": 48,
+              "raw": "\"rgba(167, 139, 250, 0.08)\""
+            }
+          }
+        },
+        {
+          "origin": "dynamic",
+          "resolvable": false
+        }
+      ]
+    },
+    "PulseButton@components/pulse-ui.tsx:143": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 143
+      },
+      "styles": [
+        {
+          "origin": "dynamic",
+          "resolvable": false
+        }
+      ]
+    },
+    "PulseButton@components/pulse-ui.tsx:149": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 149
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.pulseInner",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 283,
+          "properties": {
+            "width": {
+              "line": 284,
+              "col": 11,
+              "endCol": 14,
+              "raw": "136"
+            },
+            "height": {
+              "line": 285,
+              "col": 12,
+              "endCol": 15,
+              "raw": "136"
+            },
+            "alignItems": {
+              "line": 286,
+              "col": 16,
+              "endCol": 24,
+              "raw": "\"center\""
+            },
+            "justifyContent": {
+              "line": 287,
+              "col": 20,
+              "endCol": 28,
+              "raw": "\"center\""
+            },
+            "gap": {
+              "line": 288,
+              "col": 9,
+              "endCol": 10,
+              "raw": "8"
+            },
+            "borderRadius": {
+              "line": 289,
+              "col": 18,
+              "endCol": 20,
+              "raw": "68"
+            }
+          }
+        }
+      ]
+    },
+    "PulseButton@components/pulse-ui.tsx:151": {
+      "element": {
+        "file": "components/pulse-ui.tsx",
+        "line": 151
+      },
+      "styles": [
+        {
+          "origin": "stylesheet",
+          "ref": "styles.pulseText",
+          "file": "components/pulse-ui.tsx",
+          "defLine": 292,
+          "properties": {
+            "fontSize": {
+              "line": 295,
+              "col": 14,
+              "endCol": 16,
+              "raw": "14"
+            },
+            "letterSpacing": {
+              "line": 296,
+              "col": 19,
+              "endCol": 22,
+              "raw": "0.1"
             }
           }
         }

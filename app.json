@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "pulse",
+    "scheme": "fastshot",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "ios": {
