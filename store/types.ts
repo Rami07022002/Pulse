@@ -81,10 +81,6 @@ export interface AppState {
   fetchPartnerData: () => Promise<void>;
   fetchEvents: () => Promise<void>;
   fetchStreak: () => Promise<void>;
-  // Realtime event handlers
-  handlePartnerStatusUpdate: (icon: string, label: string, setAt: number) => void;
-  handlePartnerPulse: (timestamp: number) => void;
-  handleNewEvent: (event: TimelineEvent) => void;
   // Utility
   clearError: () => void;
   reset: () => void;

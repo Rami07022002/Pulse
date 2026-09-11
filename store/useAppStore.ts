@@ -18,7 +18,10 @@ import {
   setStatus,
   unpairUsers,
   updateProfile,
+  type DbEvent,
 } from "@/lib/supabase-db";
+
+// ── Module-level helpers (keep create callback simple) ──────────────
 
 const dateKey = (timestamp: number): string => {
   const d = new Date(timestamp);
@@ -27,7 +30,7 @@ const dateKey = (timestamp: number): string => {
   return `${d.getFullYear()}-${mm}-${dd}`;
 };
 
-const makeEvent = (
+export const makeEvent = (
   actor: EventActor,
   type: TimelineEvent["type"],
   content: string,
@@ -41,6 +44,46 @@ const makeEvent = (
   timestamp,
   ...(icon ? { icon } : {}),
 });
+
+async function loadOrCreateProfile(userId: string, email?: string) {
+  let profile = await getProfile(userId);
+  if (!profile) {
+    const name = email?.split("@")[0] || "Anonymous";
+    profile = await createProfile(userId, name);
+  }
+  return profile;
+}
+
+async function resolvePartnerInfo(partnerId: string) {
+  try {
+    const partner = await getPartnerProfile(partnerId);
+    return { partnerName: partner.display_name, partnerColor: partner.avatar_color };
+  } catch {
+    return { partnerName: "Partner", partnerColor: "#A78BFA" };
+  }
+}
+
+function mapDbEvent(
+  e: DbEvent,
+  userId: string,
+  partnerName: string,
+): TimelineEvent {
+  const isMine = e.actor_id === userId;
+  const type: TimelineEvent["type"] = isMine
+    ? e.type === "pulse_sent" ? "pulse_sent" : "status_update"
+    : e.type === "pulse_sent" ? "pulse_received" : "status_update";
+  const content = isMine
+    ? e.type === "pulse_sent" ? "You sent a pulse" : `You ${e.content || "updated status"}`
+    : e.type === "pulse_sent" ? `${partnerName} sent a pulse` : `${partnerName} ${e.content || "updated status"}`;
+  return {
+    id: e.id,
+    type,
+    actor: isMine ? "me" : "partner",
+    content,
+    icon: e.icon ?? undefined,
+    timestamp: new Date(e.created_at).getTime(),
+  };
+}
 
 const emptyUser = {
   userId: "",
@@ -56,6 +99,8 @@ const emptyUser = {
   hapticIntensity: "medium" as HapticIntensity,
 };
 
+// ── Store ───────────────────────────────────────────────────────────
+
 export const useAppStore = create<AppState>()((set, get) => ({
   hydrated: false,
   error: null,
@@ -69,29 +114,14 @@ export const useAppStore = create<AppState>()((set, get) => ({
   streak: { currentStreak: 0, lastActiveDate: null, momentCount: 0 },
   events: [],
 
-  // ── Initialize ────────────────────────────────────────────────────
   initialize: async (userId: string, email?: string) => {
     try {
-      let profile = await getProfile(userId);
-
-      if (!profile) {
-        const name = email?.split("@")[0] || "Anonymous";
-        profile = await createProfile(userId, name);
-      }
-
+      const profile = await loadOrCreateProfile(userId, email);
       const isPaired = profile.partner_id !== null;
-      let partnerName = "Partner";
-      let partnerColor = "#A78BFA";
-
-      if (isPaired && profile.partner_id) {
-        try {
-          const partner = await getPartnerProfile(profile.partner_id);
-          partnerName = partner.display_name;
-          partnerColor = partner.avatar_color;
-        } catch {
-          // Partner profile might not be accessible yet
-        }
-      }
+      const { partnerName, partnerColor } =
+        isPaired && profile.partner_id
+          ? await resolvePartnerInfo(profile.partner_id)
+          : { partnerName: "Partner", partnerColor: "#A78BFA" };
 
       set({
         hydrated: true,
@@ -111,32 +141,23 @@ export const useAppStore = create<AppState>()((set, get) => ({
         },
       });
 
-      // Load partner data and events in background
       if (isPaired && profile.partner_id) {
-        const state = get();
-        void state.fetchPartnerData();
-        void state.fetchEvents();
-        void state.fetchStreak();
+        void get().fetchPartnerData();
+        void get().fetchEvents();
+        void get().fetchStreak();
       }
-    } catch (e) {
-      set({
-        hydrated: true,
-        error: "Could not load your profile. Please try again.",
-      });
+    } catch {
+      set({ hydrated: true, error: "Could not load your profile. Please try again." });
     }
   },
 
-  // ── Pairing ───────────────────────────────────────────────────────
   pairWithPartner: async (code: string) => {
     try {
       const result = await pairWithCode(code);
       if (!result.success) {
-        set({
-          error: result.error || "No matching code found. Check the digits and try again.",
-        });
+        set({ error: result.error || "No matching code found. Check the digits and try again." });
         return false;
       }
-
       set((state) => ({
         user: {
           ...state.user,
@@ -147,35 +168,22 @@ export const useAppStore = create<AppState>()((set, get) => ({
         },
         error: null,
       }));
-
-      // Fetch partner data in background
       void get().fetchPartnerData();
       void get().fetchStreak();
-
       return true;
     } catch {
-      set({
-        error: "Pairing failed. Please check the code and try again.",
-      });
+      set({ error: "Pairing failed. Please check the code and try again." });
       return false;
     }
   },
 
-  // ── Status ────────────────────────────────────────────────────────
   setMyStatus: (icon: string, label: string) => {
     const { user } = get();
     const now = Date.now();
-
-    // Optimistic update
     set((state) => ({
       status: {
         ...state.status,
-        myStatus: {
-          icon,
-          label,
-          setAt: now,
-          expiresAt: now + 2 * 60 * 60 * 1000,
-        },
+        myStatus: { icon, label, setAt: now, expiresAt: now + 2 * 60 * 60 * 1000 },
       },
       events: [
         ...state.events,
@@ -183,8 +191,6 @@ export const useAppStore = create<AppState>()((set, get) => ({
       ].slice(-100),
       error: null,
     }));
-
-    // Background Supabase sync
     void (async () => {
       try {
         await setStatus(user.userId, icon, label);
@@ -197,15 +203,8 @@ export const useAppStore = create<AppState>()((set, get) => ({
     })();
   },
 
-  // ── Pulse ─────────────────────────────────────────────────────────
   sendPulse: () => {
     const now = Date.now();
-    const { status } = get();
-    const isMoment =
-      status.partnerLastPulseAt !== null &&
-      Math.abs(now - status.partnerLastPulseAt) <= 5 * 60 * 1000;
-
-    // Optimistic update
     set((state) => ({
       status: { ...state.status, lastPulseAt: now },
       events: [
@@ -214,8 +213,6 @@ export const useAppStore = create<AppState>()((set, get) => ({
       ].slice(-100),
       error: null,
     }));
-
-    // Background Supabase sync
     void (async () => {
       try {
         const result = await sendPulseEvent();
@@ -234,16 +231,10 @@ export const useAppStore = create<AppState>()((set, get) => ({
     })();
   },
 
-  // ── Profile updates ───────────────────────────────────────────────
   updateDisplayName: (displayName: string) => {
     const safeName = displayName.trim();
     if (!safeName) return;
-
-    set((state) => ({
-      user: { ...state.user, displayName: safeName },
-      error: null,
-    }));
-
+    set((state) => ({ user: { ...state.user, displayName: safeName }, error: null }));
     void (async () => {
       try {
         await updateProfile(get().user.userId, { display_name: safeName });
@@ -254,11 +245,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   },
 
   updateAvatarColor: (avatarColor: string) => {
-    set((state) => ({
-      user: { ...state.user, avatarColor },
-      error: null,
-    }));
-
+    set((state) => ({ user: { ...state.user, avatarColor }, error: null }));
     void (async () => {
       try {
         await updateProfile(get().user.userId, { avatar_color: avatarColor });
@@ -269,36 +256,24 @@ export const useAppStore = create<AppState>()((set, get) => ({
   },
 
   updateHapticIntensity: (hapticIntensity: HapticIntensity) => {
-    set((state) => ({
-      user: { ...state.user, hapticIntensity },
-      error: null,
-    }));
-
+    set((state) => ({ user: { ...state.user, hapticIntensity }, error: null }));
     void (async () => {
       try {
-        await updateProfile(get().user.userId, {
-          haptic_intensity: hapticIntensity,
-        });
+        await updateProfile(get().user.userId, { haptic_intensity: hapticIntensity });
       } catch {
         set({ error: "Haptic preference could not be saved." });
       }
     })();
   },
 
-  // ── Unpair ────────────────────────────────────────────────────────
   unpair: () => {
     set((state) => ({
       user: { ...state.user, isPaired: false, partnerId: null },
-      status: {
-        ...state.status,
-        partnerStatus: null,
-        partnerLastPulseAt: null,
-      },
+      status: { ...state.status, partnerStatus: null, partnerLastPulseAt: null },
       events: [],
       streak: { currentStreak: 0, lastActiveDate: null, momentCount: 0 },
       error: null,
     }));
-
     void (async () => {
       try {
         await unpairUsers();
@@ -308,17 +283,14 @@ export const useAppStore = create<AppState>()((set, get) => ({
     })();
   },
 
-  // ── Data fetching ─────────────────────────────────────────────────
   fetchPartnerData: async () => {
     const { user } = get();
     if (!user.partnerId) return;
-
     try {
       const [partner, partnerStat] = await Promise.all([
         getPartnerProfile(user.partnerId),
         getPartnerStatus(user.partnerId),
       ]);
-
       set((state) => ({
         user: {
           ...state.user,
@@ -344,28 +316,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
   fetchEvents: async () => {
     const { user } = get();
     if (!user.partnerId) return;
-
     try {
       const dbEvents = await getTodayEvents(user.userId, user.partnerId);
-      const events: TimelineEvent[] = dbEvents.map((e) => ({
-        id: e.id,
-        type: e.actor_id === user.userId
-          ? (e.type === "pulse_sent" ? "pulse_sent" : "status_update")
-          : (e.type === "pulse_sent" ? "pulse_received" : "status_update"),
-        actor: (e.actor_id === user.userId ? "me" : "partner") as "me" | "partner",
-        content:
-          e.actor_id === user.userId
-            ? e.type === "pulse_sent"
-              ? "You sent a pulse"
-              : `You ${e.content || "updated status"}`
-            : e.type === "pulse_sent"
-              ? `${user.partnerName} sent a pulse`
-              : `${user.partnerName} ${e.content || "updated status"}`,
-        icon: e.icon || undefined,
-        timestamp: new Date(e.created_at).getTime(),
-      }));
-
-      set({ events });
+      set({ events: dbEvents.map((e) => mapDbEvent(e, user.userId, user.partnerName)) });
     } catch {
       // Silently fail for background fetch
     }
@@ -389,63 +342,14 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  // ── Realtime handlers ─────────────────────────────────────────────
-  handlePartnerStatusUpdate: (icon: string, label: string, setAt: number) => {
-    const { user } = get();
-    set((state) => ({
-      status: {
-        ...state.status,
-        partnerStatus: { icon, label, setAt },
-      },
-      events: [
-        ...state.events,
-        makeEvent(
-          "partner",
-          "status_update",
-          `${user.partnerName} updated status: ${label}`,
-          setAt,
-          icon,
-        ),
-      ].slice(-100),
-    }));
-  },
-
-  handlePartnerPulse: (timestamp: number) => {
-    const { user } = get();
-    set((state) => ({
-      status: { ...state.status, partnerLastPulseAt: timestamp },
-      events: [
-        ...state.events,
-        makeEvent(
-          "partner",
-          "pulse_received",
-          `${user.partnerName} sent a pulse`,
-          timestamp,
-          "heart",
-        ),
-      ].slice(-100),
-    }));
-  },
-
-  handleNewEvent: (event: TimelineEvent) => {
-    set((state) => ({
-      events: [...state.events, event].slice(-100),
-    }));
-  },
-
-  // ── Utility ───────────────────────────────────────────────────────
   clearError: () => set({ error: null }),
+
   reset: () =>
     set({
       hydrated: false,
       error: null,
       user: { ...emptyUser },
-      status: {
-        myStatus: null,
-        partnerStatus: null,
-        lastPulseAt: null,
-        partnerLastPulseAt: null,
-      },
+      status: { myStatus: null, partnerStatus: null, lastPulseAt: null, partnerLastPulseAt: null },
       streak: { currentStreak: 0, lastActiveDate: null, momentCount: 0 },
       events: [],
     }),
