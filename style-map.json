@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": 1789156466803,
+  "generatedAt": 1789156818284,
   "entries": {
     "Index@app/index.tsx:17": {
       "element": {
@@ -7606,6 +7606,26 @@
               "col": 19,
               "endCol": 22,
               "raw": "0.1"
+            }
+          }
+        }
+      ]
+    },
+    "AuthLayout@app/auth/_layout.tsx:8": {
+      "element": {
+        "file": "app/auth/_layout.tsx",
+        "line": 8
+      },
+      "styles": [
+        {
+          "origin": "inline",
+          "file": "app/auth/_layout.tsx",
+          "properties": {
+            "flex": {
+              "line": 8,
+              "col": 25,
+              "endCol": 26,
+              "raw": "1"
             }
           }
         }
