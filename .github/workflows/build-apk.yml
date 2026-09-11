@@ -27,4 +27,6 @@ jobs:
       - name: 🔨 Build Android APK
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: eas build --platform android --profile preview --non-interactive
+        run: |
+          eas init --account raminajjars-team --non-interactive
+          eas build --platform android --profile preview --non-interactive
