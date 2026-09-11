@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Linking, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Stack, router } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, shadows } from "@/constants/theme";
 import { Fonts } from "@/constants/Typography";
@@ -12,6 +12,7 @@ import type { HapticIntensity } from "@/store/types";
 
 const avatarColors = [colors.pink, colors.violet, colors.mint, colors.orange, "#60A5FA"];
 const hapticOptions: HapticIntensity[] = ["light", "medium", "heavy"];
+const hexColorPattern = /^#[0-9A-F]{6}$/i;
 
 function WidgetPreview({ type }: { type: "home" | "lock" }) {
   return (
@@ -54,6 +55,14 @@ export default function SettingsScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [showUnpairModal, setShowUnpairModal] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [customColors, setCustomColors] = useState<string[]>([]);
+  const [colorHex, setColorHex] = useState(user.avatarColor);
+  const [colorError, setColorError] = useState<string | null>(null);
+
+  const paletteColors = useMemo(
+    () => [...new Set([...avatarColors, ...customColors])],
+    [customColors],
+  );
 
   const handleNameChange = useCallback((value: string) => {
     setDisplayName(value);
@@ -68,10 +77,45 @@ export default function SettingsScreen() {
   const handleAvatarColor = useCallback(
     (color: string) => {
       updateAvatarColor(color);
+      setColorHex(color);
+      setColorError(null);
       void triggerHaptic("light");
     },
     [updateAvatarColor],
   );
+
+  const handleColorHexChange = useCallback((value: string) => {
+    const normalized = value.startsWith("#") ? value : `#${value}`;
+    setColorHex(normalized.slice(0, 7).toUpperCase());
+    setColorError(null);
+  }, []);
+
+  const handleAddColor = useCallback(() => {
+    const normalized = colorHex.trim().toUpperCase();
+    if (!hexColorPattern.test(normalized)) {
+      setColorError("Use a six-digit hex color, like #A78BFA.");
+      return;
+    }
+
+    setCustomColors((existingColors) => (
+      existingColors.includes(normalized) ? existingColors : [...existingColors, normalized]
+    ));
+    updateAvatarColor(normalized);
+    setColorHex(normalized);
+    setColorError(null);
+    setNotice("Custom color added");
+    void triggerHaptic("light");
+  }, [colorHex, updateAvatarColor]);
+
+  const handleResetColors = useCallback(() => {
+    const fallbackColor = avatarColors[0];
+    setCustomColors([]);
+    setColorHex(fallbackColor);
+    setColorError(null);
+    updateAvatarColor(fallbackColor);
+    setNotice("Custom colors cleared");
+    void triggerHaptic("light");
+  }, [updateAvatarColor]);
 
   const handleHapticIntensity = useCallback(
     (intensity: HapticIntensity) => {
@@ -182,9 +226,13 @@ export default function SettingsScreen() {
 
         <View style={styles.sectionBlock}>
           <SectionLabel>Profile</SectionLabel>
-          <View style={styles.card}>
+          <View testID="color-picker-screen" style={styles.card}>
             <View style={styles.profileTop}>
-              <Avatar color={user.avatarColor} name={displayName} size={52} />
+              <View testID="color-preview">
+                <View testID="color-swatch">
+                  <Avatar color={user.avatarColor} name={displayName} size={52} />
+                </View>
+              </View>
               <View style={styles.profileCopy}>
                 <Text style={styles.profileLabel}>Your display name</Text>
                 <Text style={styles.profileSubtext}>This is how Alex sees you.</Text>
@@ -199,25 +247,61 @@ export default function SettingsScreen() {
                 style={styles.nameInput}
                 value={displayName}
               />
-              <Pressable accessibilityRole="button" onPress={handleSaveProfile} style={({ pressed }) => [styles.saveButton, pressed && styles.buttonPressed]}>
+              <Pressable accessibilityRole="button" onPress={handleSaveProfile} style={({ pressed }) => [styles.saveButton, pressed && styles.buttonPressed]} testID="save-color-button">
                 <Text style={styles.saveText}>Save</Text>
               </Pressable>
             </View>
-            <View style={styles.colorRow}>
-              <Text style={styles.colorLabel}>Avatar color</Text>
-              <View style={styles.colorOptions}>
-                {avatarColors.map((color) => (
-                  <Pressable
-                    key={color}
-                    accessibilityRole="button"
-                    accessibilityLabel={`Choose ${color} avatar color`}
-                    onPress={() => handleAvatarColor(color)}
-                    style={[styles.colorOption, { backgroundColor: color }, user.avatarColor === color && styles.colorOptionActive]}
-                  >
-                    {user.avatarColor === color ? <Ionicons name="checkmark" size={15} color={colors.background} /> : null}
-                  </Pressable>
-                ))}
+            <View testID="palette-screen" style={styles.paletteBlock}>
+              <View style={styles.colorRow}>
+                <Text style={styles.colorLabel}>Avatar color</Text>
+                <View testID="palette-list" style={styles.colorOptions}>
+                  <View testID="palette-item" style={styles.colorOptionsInner}>
+                    {paletteColors.map((color) => (
+                      <Pressable
+                        key={color}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Choose ${color} avatar color`}
+                        onPress={() => handleAvatarColor(color)}
+                        style={[styles.colorOption, { backgroundColor: color }, user.avatarColor === color && styles.colorOptionActive]}
+                      >
+                        {user.avatarColor === color ? <Ionicons name="checkmark" size={15} color={colors.background} /> : null}
+                      </Pressable>
+                    ))}
+                  </View>
+                </View>
               </View>
+              <View style={styles.customColorRow}>
+                <TextInput
+                  autoCapitalize="characters"
+                  autoCorrect={false}
+                  maxLength={7}
+                  onChangeText={handleColorHexChange}
+                  placeholder="#A78BFA"
+                  placeholderTextColor={colors.textTertiary}
+                  style={styles.colorHexInput}
+                  testID="color-hex-input"
+                  value={colorHex}
+                />
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={handleAddColor}
+                  style={({ pressed }) => [styles.addColorButton, pressed && styles.buttonPressed]}
+                  testID="add-palette-button"
+                >
+                  <Ionicons name="add" size={17} color={colors.background} />
+                  <Text style={styles.addColorText}>Add</Text>
+                </Pressable>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Reset custom colors"
+                  onPress={handleResetColors}
+                  style={({ pressed }) => [styles.deletePaletteButton, pressed && styles.buttonPressed]}
+                  testID="delete-palette-button"
+                >
+                  <Ionicons name="trash-outline" size={16} color={colors.pinkSoft} />
+                </Pressable>
+              </View>
+              {colorError ? <Text selectable style={styles.colorError}>{colorError}</Text> : null}
             </View>
           </View>
         </View>
@@ -480,6 +564,9 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     ...shadows.card,
   },
+  paletteBlock: {
+    gap: 12,
+  },
   profileTop: {
     flexDirection: "row",
     alignItems: "center",
@@ -540,6 +627,55 @@ const styles = StyleSheet.create({
   colorOptions: {
     flexDirection: "row",
     gap: 10,
+  },
+  colorOptionsInner: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  customColorRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  colorHexInput: {
+    flex: 1,
+    minHeight: 44,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    color: colors.white,
+    fontFamily: Fonts.medium,
+    fontSize: 12,
+    backgroundColor: colors.backgroundRaised,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  addColorButton: {
+    minHeight: 44,
+    paddingHorizontal: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    borderRadius: 12,
+    backgroundColor: colors.violet,
+  },
+  addColorText: {
+    color: colors.background,
+    fontFamily: Fonts.semiBold,
+    fontSize: 12,
+  },
+  deletePaletteButton: {
+    width: 44,
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+    backgroundColor: "#40232D",
+  },
+  colorError: {
+    color: colors.danger,
+    fontFamily: Fonts.medium,
+    fontSize: 11,
   },
   colorOption: {
     width: 27,

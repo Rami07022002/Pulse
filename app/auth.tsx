@@ -51,10 +51,14 @@ function Radar() {
     const sweepAnimation = Animated.loop(
       Animated.timing(sweep, { toValue: 1, duration: 2600, useNativeDriver: true }),
     );
-    animations.forEach((animation) => animation.start());
+    animations.forEach((animation) => {
+      animation.start();
+    });
     sweepAnimation.start();
     return () => {
-      animations.forEach((animation) => animation.stop());
+      animations.forEach((animation) => {
+        animation.stop();
+      });
       sweepAnimation.stop();
     };
   }, [rings, sweep]);
@@ -179,7 +183,7 @@ export default function AuthScreen() {
   }
 
   if (isPaired) {
-    return <Redirect href="/(tabs)" />;
+    return <Redirect href="/(tabs)/dashboard" />;
   }
 
   return (

@@ -63,6 +63,14 @@ export const useAppStore = create<AppState>()(
     (set, get) => ({
       hydrated: false,
       error: null,
+      completeHydration: () => {
+        try {
+          get().pruneTimeline();
+          set({ hydrated: true });
+        } catch {
+          set({ hydrated: true, error: "Your local Pulse data could not be loaded." });
+        }
+      },
       user: initialUser,
       status: {
         myStatus: null,
@@ -280,17 +288,7 @@ export const useAppStore = create<AppState>()(
         streak: state.streak,
         events: state.events,
       }),
-      onRehydrateStorage: () => (state, hydrationError) => {
-        if (hydrationError) {
-          useAppStore.setState({
-            hydrated: true,
-            error: "Your local Pulse data could not be loaded.",
-          });
-          return;
-        }
-        state?.pruneTimeline();
-        useAppStore.setState({ hydrated: true });
-      },
+      skipHydration: true,
     },
   ),
 );

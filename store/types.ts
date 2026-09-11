@@ -59,6 +59,7 @@ export interface TimelineEvent {
 export interface AppState {
   hydrated: boolean;
   error: string | null;
+  completeHydration: () => void;
   user: UserProfile;
   status: StatusState;
   streak: StreakState;

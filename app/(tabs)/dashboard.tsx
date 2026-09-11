@@ -111,9 +111,10 @@ export default function DashboardScreen() {
   }
 
   return (
-    <>
+    <View testID="home-screen" style={styles.screen}>
       <Stack.Screen options={{ title: "Dashboard", headerShown: false }} />
       <ScrollView
+        testID="home-screen-content"
         contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={[styles.content, { paddingTop: insets.top + 18, paddingBottom: insets.bottom + 88 }]}
         showsVerticalScrollIndicator={false}
@@ -190,11 +191,15 @@ export default function DashboardScreen() {
           </View>
         ) : null}
       </ScrollView>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
   content: {
     flexGrow: 1,
     width: "100%",
