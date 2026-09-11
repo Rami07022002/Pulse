@@ -12,6 +12,7 @@
       "supportsTablet": false
     },
     "android": {
+      "package": "com.raminajjar.pulse",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#10192b"
