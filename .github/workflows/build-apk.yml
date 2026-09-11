@@ -25,4 +25,6 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: 🔨 Build Android APK
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: eas build --platform android --profile preview --non-interactive
