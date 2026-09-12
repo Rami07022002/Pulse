@@ -1,14 +1,17 @@
 {
-"cli":
-{
-"version": ">= 10.0.0"
-},
-"build": {
-"preview": {
-"distribution": "internal",
-"android": {
-"buildType": "apk"
-}
-}
-}
+  "cli": {
+    "version": ">= 10.0.0"
+  },
+  "build": {
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://sjijsnlhpactsanqudxm.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqaWpzbmxocGFjdHNhbnF1ZHhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxNTQ4OTksImV4cCI6MjEwNDczMDg5OX0.caYampa-Q4djks2k7GtI8jP16ernF3tE2YVbVOri25E"
+      }
+    }
+  }
 }
